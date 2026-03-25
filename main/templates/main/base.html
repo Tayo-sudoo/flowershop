@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0f0b">
+  <meta name="description" content="Flora Luxe — премиальный цветочный магазин. Свежие цветы с доставкой.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Flora Luxe — {% block title %}Flower Shop{% endblock %}</title>
+  {% load static %}
+  {% load i18n_tags %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+  :root {
+    --ink:#0c1410; --ink2:#131d15; --ink3:#1a2419; --ink4:#222e24;
+    --surface:rgba(12,18,13,.96);
+    --rose:#b5312a; --rose2:#d94035; --rose3:#e85d52;
+    --amber:#c8963c; --amber2:#e0b55a; --amber3:#f5d080;
+    --sage:#4a6e50; --sage2:#6a9470;
+    --cream:#f0ebe0; --cream2:#d4cfc4;
+    --mist:rgba(240,235,224,.5);
+    --edge:rgba(74,110,80,.14); --edge2:rgba(181,49,42,.15);
+    --nav-h:68px;
+    --r-xs:.5rem; --r-sm:.75rem; --r-md:1rem; --r-lg:1.4rem; --r-xl:1.8rem; --r-2xl:2.5rem;
+    --sh-sm:0 2px 12px rgba(0,0,0,.4); --sh-md:0 8px 32px rgba(0,0,0,.55); --sh-lg:0 20px 60px rgba(0,0,0,.7);
+    --serif:'Cormorant Garamond',Georgia,serif;
+    --sans:'DM Sans',-apple-system,sans-serif;
+    --grad-rose:linear-gradient(135deg,#8e2218,#b5312a,#d94035);
+    --grad-amber:linear-gradient(135deg,#a07828,#c8963c,#e0b55a);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;font-size:16px}
+  body{font-family:var(--sans);background:var(--ink);color:var(--cream);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 800px 600px at 15% 20%,rgba(181,49,42,.07) 0%,transparent 100%),radial-gradient(ellipse 600px 800px at 85% 75%,rgba(30,80,35,.09) 0%,transparent 100%)}
+  a{color:var(--rose3);text-decoration:none;transition:color .2s}
+  a:hover{color:var(--amber2)}
+  img{max-width:100%;display:block}
+  main{position:relative;z-index:1}
+
+  /* SPLASH */
+  #splash{position:fixed;inset:0;z-index:9999;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;pointer-events:none}
+  #splash.done{animation:splashOut .6s .1s forwards}
+  @keyframes splashOut{to{opacity:0;visibility:hidden}}
+  .splash-svg{width:72px;height:72px;animation:splashPop .7s cubic-bezier(.22,1,.36,1)}
+  .splash-name{font-family:var(--serif);font-size:2.8rem;font-weight:700;color:var(--amber2);letter-spacing:-.02em;animation:splashPop .7s .1s cubic-bezier(.22,1,.36,1) both;text-shadow:0 0 60px rgba(200,150,60,.3)}
+  .splash-sub{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);animation:splashPop .7s .18s cubic-bezier(.22,1,.36,1) both}
+  .splash-bar{width:0;height:1.5px;background:linear-gradient(90deg,transparent,var(--amber2),transparent);animation:splashPop .1s .25s both,barGrow 2s .3s ease-out forwards}
+  @keyframes splashPop{from{opacity:0;transform:translateY(16px)}}
+  @keyframes barGrow{to{width:160px}}
+
+  /* NAV */
+  .nav{position:sticky;top:0;z-index:1000;height:var(--nav-h);background:var(--surface);backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px);border-bottom:1px solid var(--edge);transition:box-shadow .3s,border-color .3s}
+  .nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.6);border-bottom-color:var(--edge2)}
+  .nav-inner{max-width:1320px;margin:0 auto;height:100%;padding:0 1.5rem;display:flex;align-items:center;gap:1rem}
+  .nav-logo{display:flex;align-items:center;gap:.55rem;font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--amber2);white-space:nowrap;letter-spacing:-.01em;text-shadow:0 0 40px rgba(200,150,60,.2);margin-right:auto;transition:color .2s}
+  .nav-logo:hover{color:var(--amber3)}
+  .logo-svg{width:38px;height:38px;flex-shrink:0}
+  .nav-links{display:flex;align-items:center;gap:.15rem;list-style:none}
+  .nav-links a{display:flex;align-items:center;gap:.35rem;font-size:.83rem;font-weight:500;color:var(--mist);padding:.45rem .82rem;border-radius:2rem;transition:all .2s;white-space:nowrap}
+  .nav-links a svg{width:14px;height:14px;flex-shrink:0}
+  .nav-links a:hover,.nav-links a.active{background:rgba(181,49,42,.12);color:var(--cream)}
+  .nav-links a.active{color:var(--rose3)}
+  .nav-cart{position:relative;padding:.38rem .52rem;border-radius:var(--r-sm);display:flex;align-items:center;gap:.3rem;font-size:.83rem;font-weight:500;color:var(--mist);transition:all .2s}
+  .nav-cart svg{width:18px;height:18px}
+  .nav-cart:hover{background:rgba(255,255,255,.06);color:var(--cream)}
+  .cart-badge{position:absolute;top:.05rem;right:.05rem;background:var(--rose);color:#fff;font-size:.58rem;font-weight:700;min-width:.95rem;height:.95rem;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .lang-pills{display:flex;gap:.2rem}
+  .lang-pill{font-size:.78rem;font-weight:700;padding:.38rem .72rem;border-radius:1rem;border:1px solid var(--edge);color:var(--mist);transition:all .2s;cursor:pointer;background:transparent;letter-spacing:.04em;min-height:34px;display:inline-flex;align-items:center}
+  .lang-pill:hover,.lang-active{background:var(--rose);color:#fff!important;border-color:var(--rose)}
+  .user-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(200,150,60,.28);background:var(--ink4);cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all .2s;padding:0}
+  .user-btn:hover{border-color:var(--amber2);box-shadow:0 0 14px rgba(200,150,60,.22)}
+  .user-init{font-size:.76rem;font-weight:700;color:var(--amber2);text-transform:uppercase}
+  .user-init img{width:100%;height:100%;object-fit:cover}
+  .user-wrap{position:relative}
+  .user-drop{display:none;position:absolute;top:calc(100% + 10px);right:0;min-width:200px;background:#0b1610;border:1px solid rgba(200,150,60,.16);border-radius:var(--r-lg);padding:.85rem .45rem .65rem;box-shadow:0 40px 100px rgba(0,0,0,.8);z-index:2000}
+  .user-drop.open{display:block;animation:dropIn .2s cubic-bezier(.22,1,.36,1)}
+  @keyframes dropIn{from{opacity:0;transform:translateY(-8px) scale(.97)}}
+  .drop-close{position:absolute;top:.4rem;right:.5rem;width:20px;height:20px;border-radius:50%;background:rgba(181,49,42,.18);border:none;color:var(--rose3);font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .drop-name{font-size:.77rem;font-weight:600;color:var(--amber2);padding:.05rem .65rem .6rem;border-bottom:1px solid rgba(200,150,60,.1);margin-bottom:.35rem}
+  .drop-item{display:flex;align-items:center;gap:.5rem;padding:.46rem .65rem;border-radius:var(--r-xs);color:var(--mist);font-size:.82rem;font-weight:500;text-decoration:none;transition:all .18s}
+  .drop-item svg{width:14px;height:14px;flex-shrink:0}
+  .drop-item:hover{background:rgba(200,150,60,.07);color:var(--cream)}
+  .drop-logout{color:var(--rose3);margin-top:.3rem;border-top:1px solid var(--edge2);padding-top:.55rem}
+  .drop-logout:hover{background:rgba(181,49,42,.1);color:var(--rose3)}
+  .drop-badge{margin-left:auto;background:var(--rose);color:#fff;font-size:.58rem;font-weight:700;min-width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:.5rem;background:none;border:none;min-width:44px;min-height:44px;align-items:center;justify-content:center;border-radius:var(--r-xs)}
+  .hamburger span{display:block;width:20px;height:1.5px;background:var(--cream2);border-radius:2px;transition:transform .3s,opacity .3s}
+  .hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+  .hamburger.open span:nth-child(2){opacity:0}
+  .hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+  @media(max-width:900px){
+    .hamburger{display:flex}
+    .nav-links{display:none;flex-direction:column;gap:0;position:absolute;top:100%;left:0;right:0;background:rgba(10,15,11,.98);backdrop-filter:blur(28px);border-bottom:1px solid var(--edge);padding:.5rem .6rem .9rem;z-index:999}
+    .nav-links.open{display:flex}
+    .nav-links li{width:100%}
+    .nav-links a{width:100%;padding:.72rem 1rem;border-radius:var(--r-sm);font-size:.93rem;min-height:48px;border-bottom:1px solid rgba(74,110,80,.06)}
+    .nav-links>li:last-child>a{border-bottom:none}
+    .nav-inner{position:relative}
+    .user-drop{left:0;right:auto}
+  }
+
+  /* MESSAGES */
+  .messages{max-width:680px;margin:.8rem auto;padding:0 1.5rem}
+  .message{padding:.72rem 1.1rem;border-radius:var(--r-sm);margin-bottom:.4rem;font-size:.85rem;background:var(--ink3);border-left:3px solid var(--rose);box-shadow:var(--sh-sm);animation:msgIn .3s cubic-bezier(.22,1,.36,1)}
+  @keyframes msgIn{from{opacity:0;transform:translateX(-12px)}}
+  .message.success{border-left-color:#2ecc71}
+  .message.error{border-left-color:var(--rose2)}
+  .message.warning{border-left-color:var(--amber)}
+  .message.info{border-left-color:#3498db}
+
+  /* FOOTER */
+  footer{background:var(--ink2);border-top:1px solid var(--edge);padding:3.5rem 1.5rem 2rem;margin-top:6rem;position:relative;z-index:1}
+  .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.8fr 1fr 1fr 1.4fr;gap:2.5rem}
+  .footer-brand .brand-logo{font-family:var(--serif);font-size:1.6rem;font-weight:700;color:var(--amber2);display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem}
+  .footer-brand p{font-size:.81rem;color:var(--mist);line-height:1.7;margin-bottom:1rem}
+  .footer-social{display:flex;gap:.45rem}
+  .social-btn{width:36px;height:36px;border-radius:var(--r-xs);background:var(--ink3);border:1px solid var(--edge);display:flex;align-items:center;justify-content:center;transition:all .2s;color:var(--mist)}
+  .social-btn svg{width:15px;height:15px}
+  .social-btn:hover{background:var(--rose);border-color:var(--rose);color:#fff}
+  .footer-col h4{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:.95rem}
+  .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.42rem}
+  .footer-col a{font-size:.83rem;color:var(--mist);transition:color .2s;display:flex;align-items:center;gap:.38rem}
+  .footer-col a:hover{color:var(--amber2)}
+  .footer-contact-item{display:flex;align-items:flex-start;gap:.48rem;font-size:.82rem;color:var(--mist);margin-bottom:.52rem}
+  .footer-contact-item svg{width:14px;height:14px;flex-shrink:0;margin-top:.1rem;color:var(--amber)}
+  .footer-bottom{max-width:1100px;margin:2rem auto 0;padding-top:1.2rem;border-top:1px solid var(--edge);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+  .footer-bottom>span{font-size:.74rem;color:rgba(240,235,224,.3)}
+  .footer-badges{display:flex;gap:.5rem}
+  .footer-badge{padding:.22rem .6rem;border-radius:.35rem;background:var(--ink3);border:1px solid var(--edge);font-size:.67rem;font-weight:600;color:var(--mist)}
+  @media(max-width:800px){.footer-inner{grid-template-columns:1fr 1fr}}
+  @media(max-width:500px){.footer-inner{grid-template-columns:1fr;gap:1.8rem};footer{padding:2.5rem 1rem 1.5rem;margin-top:3.5rem};.messages{padding:0 .75rem}}
+
+  /* SHARED */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.76rem 1.75rem;border:none;border-radius:3rem;font-family:var(--sans);font-size:.87rem;font-weight:600;cursor:pointer;text-decoration:none;letter-spacing:.015em;transition:all .22s;min-height:48px;white-space:nowrap}
+  .btn svg{width:15px;height:15px}
+  .btn-primary{background:var(--grad-rose);color:#fff;box-shadow:0 6px 24px rgba(181,49,42,.38)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(181,49,42,.52);color:#fff;opacity:.92}
+  .btn-outline{background:transparent;color:var(--mist);border:1.5px solid var(--edge)}
+  .btn-outline:hover{border-color:var(--amber2);color:var(--amber2)}
+  .btn-amber{background:var(--grad-amber);color:#1a0f00;box-shadow:0 6px 24px rgba(200,150,60,.28)}
+  .btn-amber:hover{transform:translateY(-2px);color:#1a0f00;opacity:.9}
+  .btn-ghost{background:rgba(255,255,255,.07);backdrop-filter:blur(8px);border:1.5px solid rgba(240,235,224,.17);color:var(--cream)}
+  .btn-ghost:hover{background:rgba(255,255,255,.13);color:#fff;transform:translateY(-2px)}
+  .card{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-xl);box-shadow:var(--sh-md)}
+  .section-title{font-family:var(--serif);font-size:clamp(1.9rem,4vw,3rem);font-weight:700;color:var(--amber2);letter-spacing:-.02em;position:relative;display:inline-block}
+  .section-title::after{content:'';position:absolute;bottom:-6px;left:0;width:40%;height:1.5px;background:linear-gradient(90deg,var(--rose),transparent);border-radius:2px}
+  .badge{display:inline-flex;align-items:center;gap:.28rem;font-size:.67rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.26rem .68rem;border-radius:2rem}
+  .badge-rose{background:rgba(181,49,42,.18);color:var(--rose3);border:1px solid rgba(181,49,42,.28)}
+  .badge-green{background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.18)}
+  .badge-amber{background:rgba(200,150,60,.13);color:var(--amber2);border:1px solid rgba(200,150,60,.2)}
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .65s,transform .65s}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+  .stagger>*{opacity:0;transform:translateY(18px)}
+  .stagger.visible>*:nth-child(1){transition:opacity .5s .04s,transform .5s .04s}
+  .stagger.visible>*:nth-child(2){transition:opacity .5s .1s,transform .5s .1s}
+  .stagger.visible>*:nth-child(3){transition:opacity .5s .16s,transform .5s .16s}
+  .stagger.visible>*:nth-child(4){transition:opacity .5s .22s,transform .5s .22s}
+  .stagger.visible>*:nth-child(5){transition:opacity .5s .28s,transform .5s .28s}
+  .stagger.visible>*:nth-child(6){transition:opacity .5s .34s,transform .5s .34s}
+  .stagger.visible>*:nth-child(7){transition:opacity .5s .4s,transform .5s .4s}
+  .stagger.visible>*:nth-child(8){transition:opacity .5s .46s,transform .5s .46s}
+  .stagger.visible>*{opacity:1;transform:translateY(0)}
+  .field-input{width:100%;padding:.74rem 1.1rem;border:1.5px solid var(--edge);border-radius:var(--r-sm);background:var(--ink3);color:var(--cream);font-family:var(--sans);font-size:.9rem;outline:none;transition:border-color .2s;min-height:48px;-webkit-appearance:none}
+  .field-input::placeholder{color:rgba(240,235,224,.26)}
+  .field-input:focus{border-color:var(--rose)}
+  ::-webkit-scrollbar{width:6px}
+  ::-webkit-scrollbar-track{background:var(--ink)}
+  ::-webkit-scrollbar-thumb{background:var(--sage);border-radius:3px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--rose)}
+
+  /* Mobile readability */
+  @media(max-width:600px){
+    body{background:#0c1410}
+    .card,.co-card,.f-card,.ord-card,.ab-story,.ab-val,.ct-card,.ct-form,.ct-map{
+      background:#161f17;
+      border-color:rgba(74,110,80,.2);
+    }
+    .mist, .text-mist, [class*="soft"], [class*="mist"]{color:rgba(240,235,224,.65)!important}
+    p, span, div{color:inherit}
+  }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <svg class="splash-svg" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="36" cy="36" r="35" fill="rgba(181,49,42,.1)" stroke="rgba(181,49,42,.2)" stroke-width="1"/>
+    <path d="M36 14 C36 14 26 21 26 31 C26 38.8 30.2 42.8 36 45 C41.8 42.8 46 38.8 46 31 C46 21 36 14 36 14Z" fill="#c8963c"/>
+    <path d="M36 14 C36 14 46 19 48 29 C49.6 37 46.8 42 42 44.4 C43 41 42 37.4 39.8 34 C38.4 31.8 37 28 36 14Z" fill="#e0b55a" opacity=".75"/>
+    <path d="M36 14 C36 14 26 19 24 29 C22.4 37 25.2 42 30 44.4 C29 41 30 37.4 32.2 34 C33.6 31.8 35 28 36 14Z" fill="#f5d080" opacity=".45"/>
+    <circle cx="36" cy="31" r="3.5" fill="rgba(255,255,240,.18)"/>
+    <path d="M36 45 L36 59" stroke="#4a6e50" stroke-width="3" stroke-linecap="round"/>
+    <path d="M36 53 C36 53 29 49.5 25.5 53" stroke="#4a6e50" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M36 57 C36 57 42 54 45 57" stroke="#4a6e50" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </svg>
+  <div class="splash-name">Flora Luxe</div>
+  <div class="splash-sub">Premium Flower Shop</div>
+  <div class="splash-bar"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="{% url 'home' %}" class="nav-logo">
+      <svg class="logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 3C16 3 9 8 9 14.5C9 19.8 12.2 22.8 16 24.2C19.8 22.8 23 19.8 23 14.5C23 8 16 3 16 3Z" fill="#c8963c"/>
+        <path d="M16 3C16 3 23 7 24.5 13.5C25.7 18.5 23.5 22.5 19.5 24C20.2 21 19.5 18 17.5 15.2C16.5 13.7 16.2 10 16 3Z" fill="#e0b55a" opacity=".7"/>
+        <circle cx="16" cy="14.5" r="2.8" fill="rgba(255,255,240,.16)"/>
+        <path d="M16 24.2L16 30" stroke="#4a6e50" stroke-width="2" stroke-linecap="round"/>
+        <path d="M16 28C16 28 12 25.8 10 28" stroke="#4a6e50" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      </svg>
+      Flora Luxe
+    </a>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="{% url 'home' %}" {% if request.path == '/' %}class="active"{% endif %}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        {% t 'home' %}</a></li>
+      <li><a href="{% url 'catalog' %}" {% if '/catalog' in request.path %}class="active"{% endif %}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v2M12 16v2M6 12H4M20 12h-2M7.76 7.76l1.42 1.42M14.83 14.83l1.42 1.42M7.76 16.24l1.42-1.42M14.83 9.17l1.42-1.42"/></svg>
+        {% t 'catalog' %}</a></li>
+      <li><a href="{% url 'about' %}" {% if '/about' in request.path %}class="active"{% endif %}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        {% t 'about' %}</a></li>
+      <li><a href="{% url 'contacts' %}" {% if '/contacts' in request.path %}class="active"{% endif %}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.04 2.22 2 2 0 012.03 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+        {% t 'contacts' %}</a></li>
+      <li>
+        <a href="{% url 'cart' %}" class="nav-cart {% if '/cart' in request.path %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          {% if request.session.cart %}<span class="cart-badge">{{ request.session.cart|length }}</span>{% endif %}
+        </a>
+      </li>
+
+      {% if user.is_authenticated %}
+      <li class="user-wrap">
+        <button class="user-btn" id="userBtn" aria-label="Account">
+          <div class="user-init">
+            {% if user.profile.avatar %}<img src="{{ user.profile.avatar.url }}" alt="">
+            {% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}
+          </div>
+        </button>
+        <div class="user-drop" id="userDrop">
+          <button class="drop-close" id="dropClose">✕</button>
+          <div class="drop-name">{{ user.username }}</div>
+          <a href="{% url 'profile' %}" class="drop-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            {% t 'profile' %}</a>
+          <a href="{% url 'cart' %}" class="drop-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            {% t 'cart' %}
+            {% if request.session.cart %}<span class="drop-badge">{{ request.session.cart|length }}</span>{% endif %}
+          </a>
+          <a href="{% url 'logout' %}" class="drop-item drop-logout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            {% t 'logout' %}</a>
+        </div>
+      </li>
+      {% else %}
+        <li><a href="{% url 'login' %}" {% if '/login' in request.path %}class="active"{% endif %}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          {% t 'login' %}</a></li>
+        <li><a href="{% url 'register' %}" {% if '/register' in request.path %}class="active"{% endif %}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          {% t 'register' %}</a></li>
+      {% endif %}
+
+      <li>
+        <div class="lang-pills">
+          <a href="#" onclick="setLang('ru');return false;" class="lang-pill {% if current_lang == 'ru' %}lang-active{% endif %}">RU</a>
+          <a href="#" onclick="setLang('uz');return false;" class="lang-pill {% if current_lang == 'uz' %}lang-active{% endif %}">UZ</a>
+          <a href="#" onclick="setLang('en');return false;" class="lang-pill {% if current_lang == 'en' %}lang-active{% endif %}">EN</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  {% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+      <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="brand-logo">
+        <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><path d="M16 3C16 3 9 8 9 14.5C9 19.8 12.2 22.8 16 24.2C19.8 22.8 23 19.8 23 14.5C23 8 16 3 16 3Z" fill="#c8963c"/><path d="M16 24.2L16 30" stroke="#4a6e50" stroke-width="2" stroke-linecap="round"/><path d="M16 28C16 28 12 25.8 10 28" stroke="#4a6e50" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+        Flora Luxe
+      </div>
+      <p>{% if current_lang == 'uz' %}Premium gullar va buyurtma guldastalar. Buxoro bo'ylab tezkor yetkazib berish.{% elif current_lang == 'en' %}Premium flowers and bespoke bouquets. Fast delivery across Bukhara.{% else %}Премиальные цветы и авторские букеты. Быстрая доставка по Бухаре.{% endif %}</p>
+      <div class="footer-social">
+        <a href="https://instagram.com/flora.luxe.uz" target="_blank" rel="noopener" class="social-btn" title="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://t.me/floraluxe_uz" target="_blank" rel="noopener" class="social-btn" title="Telegram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+        </a>
+        <a href="https://wa.me/998901234567" target="_blank" rel="noopener" class="social-btn" title="WhatsApp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+        </a>
+        <a href="https://facebook.com/floraluxe" target="_blank" rel="noopener" class="social-btn" title="Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>{% if current_lang == 'uz' %}Sahifalar{% elif current_lang == 'en' %}Pages{% else %}Страницы{% endif %}</h4>
+      <ul>
+        <li><a href="{% url 'home' %}">{% t 'home' %}</a></li>
+        <li><a href="{% url 'catalog' %}">{% t 'catalog' %}</a></li>
+        <li><a href="{% url 'about' %}">{% t 'about' %}</a></li>
+        <li><a href="{% url 'contacts' %}">{% t 'contacts' %}</a></li>
+        <li><a href="{% url 'cart' %}">{% t 'cart' %}</a></li>
+        <li><a href="{% url 'check_receipt' %}">{% if current_lang == 'uz' %}Chekni tekshirish{% elif current_lang == 'en' %}Verify Receipt{% else %}Проверить чек{% endif %}</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>{% if current_lang == 'uz' %}Xizmatlar{% elif current_lang == 'en' %}Services{% else %}Услуги{% endif %}</h4>
+      <ul>
+        <li><a href="{% url 'catalog' %}">{% if current_lang == 'uz' %}Guldastalar{% elif current_lang == 'en' %}Bouquets{% else %}Букеты{% endif %}</a></li>
+        <li><a href="{% url 'catalog' %}">{% if current_lang == 'uz' %}To'y bezatish{% elif current_lang == 'en' %}Wedding decor{% else %}Свадебный декор{% endif %}</a></li>
+        <li><a href="{% url 'catalog' %}">{% if current_lang == 'uz' %}Korporativ{% elif current_lang == 'en' %}Corporate{% else %}Корпоративным{% endif %}</a></li>
+        <li><a href="{% url 'catalog' %}">{% if current_lang == 'uz' %}Yetkazib berish{% elif current_lang == 'en' %}Delivery{% else %}Доставка{% endif %}</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>{% t 'our_contacts' %}</h4>
+      <div class="footer-contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.04 2.22 2 2 0 012.03 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+        <span>+998 90 123 45 67</span>
+      </div>
+      <div class="footer-contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span>info@floraluxe.uz</span>
+      </div>
+      <div class="footer-contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>{% if current_lang == 'uz' %}Buxoro, Markaziy{% elif current_lang == 'en' %}Bukhara, Center{% else %}Бухара, Центр{% endif %}</span>
+      </div>
+      <div class="footer-contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>{% if current_lang == 'uz' %}9:00–21:00, har kuni{% elif current_lang == 'en' %}9:00–21:00, daily{% else %}9:00–21:00, ежедневно{% endif %}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 Flora Luxe. {% if current_lang == 'uz' %}Barcha huquqlar himoyalangan{% elif current_lang == 'en' %}All rights reserved{% else %}Все права защищены{% endif %}.</span>
+    <div class="footer-badges">
+      <span class="footer-badge">🔒 SSL</span>
+      <span class="footer-badge">💳 Visa / MC</span>
+      <span class="footer-badge">📱 Mobile</span>
+    </div>
+  </div>
+</footer>
+
+<script src="{% static 'js/animations.js' %}"></script>
+<script>
+(function(){
+  var s=document.getElementById('splash');
+  if(!s)return;
+  if(sessionStorage.getItem('splashed')){s.style.display='none';return;}
+  sessionStorage.setItem('splashed','1');
+  setTimeout(function(){s.classList.add('done');setTimeout(function(){s.style.display='none';},700);},2400);
+})();
+window.addEventListener('scroll',function(){document.getElementById('mainNav').classList.toggle('scrolled',window.scrollY>20);},{passive:true});
+function setLang(lang){fetch("{% url 'change_language' %}",{method:'POST',headers:{'X-CSRFToken':'{{ csrf_token }}','Content-Type':'application/x-www-form-urlencoded'},body:'language='+lang}).then(function(){location.reload();});}
+var ham=document.getElementById('hamburger'),navl=document.getElementById('navLinks');
+if(ham){ham.addEventListener('click',function(){this.classList.toggle('open');navl.classList.toggle('open');});navl.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){ham.classList.remove('open');navl.classList.remove('open');});});}
+(function(){var btn=document.getElementById('userBtn'),drop=document.getElementById('userDrop'),cls=document.getElementById('dropClose');if(!btn||!drop)return;btn.addEventListener('click',function(e){e.stopPropagation();drop.classList.toggle('open');});if(cls)cls.addEventListener('click',function(e){e.stopPropagation();drop.classList.remove('open');});document.addEventListener('click',function(e){if(!e.target.closest('.user-wrap'))drop.classList.remove('open');});document.addEventListener('keydown',function(e){if(e.key==='Escape')drop.classList.remove('open');});})();
+(function(){var els=document.querySelectorAll('.reveal,.stagger');if(!els.length||!window.IntersectionObserver){els.forEach(function(el){el.classList.add('visible');});return;}var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});},{threshold:.1});els.forEach(function(el){io.observe(el);});})();
+setTimeout(function(){document.querySelectorAll('.message').forEach(function(m){m.style.transition='opacity .5s';m.style.opacity='0';setTimeout(function(){m.remove();},500);});},5000);
+</script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

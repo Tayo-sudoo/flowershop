@@ -1,0 +1,206 @@
+{% extends 'main/base.html' %}
+{% load i18n_tags %}
+{% block title %}{% if current_lang == 'uz' %}Kontaktlar{% elif current_lang == 'en' %}Contacts{% else %}Контакты{% endif %} — Flora Luxe{% endblock %}
+{% block extra_head %}
+<style>
+.ct-wrap{max-width:1020px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+
+.ct-hero{background:linear-gradient(140deg,var(--ink3),#1e0d0b);border:1px solid var(--edge2);border-radius:var(--r-2xl);padding:3rem 2rem;text-align:center;margin-bottom:2.5rem;box-shadow:var(--sh-lg);position:relative;overflow:hidden}
+.ct-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(181,49,42,.1),transparent 60%);pointer-events:none}
+.ct-hero h1{font-family:var(--serif);font-size:clamp(2rem,4.5vw,3rem);font-weight:700;color:var(--amber2);margin-bottom:.6rem;letter-spacing:-.02em}
+.ct-hero p{color:var(--mist);font-size:.95rem;max-width:480px;margin:0 auto}
+
+.ct-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:1.6rem}
+@media(max-width:720px){.ct-grid{grid-template-columns:1fr}}
+
+/* CONTACT CARDS */
+.ct-cards{display:flex;flex-direction:column;gap:.8rem}
+.ct-card{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-lg);padding:1.1rem 1.3rem;display:flex;align-items:center;gap:1rem;box-shadow:var(--sh-sm);transition:border-color .2s,transform .2s;text-decoration:none;color:inherit}
+.ct-card:hover{border-color:rgba(200,150,60,.3);transform:translateX(4px)}
+.ct-card-ico{width:46px;height:46px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ct-card-ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ct-card-ico.rose{background:rgba(181,49,42,.15);color:var(--rose3)}
+.ct-card-ico.amber{background:rgba(200,150,60,.12);color:var(--amber2)}
+.ct-card-ico.green{background:rgba(74,110,80,.15);color:var(--sage2)}
+.ct-card-ico.blue{background:rgba(52,152,219,.12);color:#5dade2}
+.ct-card-ico.tg{background:rgba(41,182,246,.12);color:#29b6f6}
+.ct-card-ico.ig{background:rgba(225,48,108,.12);color:#e1306c}
+.ct-card-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mist);margin-bottom:.18rem}
+.ct-card-val{font-size:.93rem;font-weight:500;color:var(--cream)}
+
+/* WORKING HOURS */
+.ct-hours{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-lg);padding:1.2rem 1.3rem;margin-top:.8rem}
+.ct-hours-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem}
+.ct-hours-title svg{width:14px;height:14px;stroke:var(--amber);fill:none;stroke-width:2;stroke-linecap:round}
+.ct-hours-row{display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px dashed var(--edge);font-size:.83rem}
+.ct-hours-row:last-child{border-bottom:none}
+.ct-hours-row .day{color:var(--mist)}
+.ct-hours-row .time{color:var(--cream);font-weight:600}
+.ct-hours-row.today .day{color:var(--amber2);font-weight:600}
+.ct-hours-row.today .time{color:var(--amber2)}
+
+/* RIGHT COLUMN */
+.ct-right{display:flex;flex-direction:column;gap:1rem}
+
+/* MAP */
+.ct-map{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-md)}
+.ct-map-head{padding:1rem 1.3rem .8rem;border-bottom:1px solid var(--edge);display:flex;align-items:center;gap:.5rem}
+.ct-map-head svg{width:16px;height:16px;stroke:var(--rose2);fill:none;stroke-width:2;stroke-linecap:round}
+.ct-map-head span{font-size:.82rem;font-weight:600;color:var(--cream)}
+.ct-map iframe{width:100%;height:200px;border:none;display:block;filter:invert(.88) hue-rotate(140deg) saturate(.65) brightness(.9)}
+.ct-map-addr{padding:.8rem 1.3rem;font-size:.8rem;color:var(--mist);line-height:1.6;border-top:1px solid var(--edge)}
+.ct-map-addr strong{color:var(--cream2)}
+
+/* FORM */
+.ct-form{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-xl);padding:1.5rem;box-shadow:var(--sh-md)}
+.ct-form-title{font-family:var(--serif);font-size:1.25rem;font-weight:700;color:var(--amber2);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
+.ct-form-title svg{width:18px;height:18px;stroke:var(--rose2);fill:none;stroke-width:1.8;stroke-linecap:round}
+.ct-field{margin-bottom:.8rem}
+.ct-field label{display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mist);margin-bottom:.35rem}
+.ct-field input,.ct-field textarea{width:100%;padding:.7rem 1rem;border:1.5px solid var(--edge);border-radius:var(--r-sm);background:var(--ink3);color:var(--cream);font-family:var(--sans);font-size:.88rem;outline:none;transition:border-color .2s;min-height:46px;-webkit-appearance:none}
+.ct-field input::placeholder,.ct-field textarea::placeholder{color:rgba(240,235,224,.22)}
+.ct-field input:focus,.ct-field textarea:focus{border-color:var(--rose)}
+.ct-field textarea{resize:vertical;min-height:90px}
+
+/* SOCIAL ROW */
+.ct-socials{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-lg);padding:1.1rem 1.3rem}
+.ct-socials-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);margin-bottom:.9rem}
+.ct-soc-links{display:flex;gap:.6rem;flex-wrap:wrap}
+.ct-soc-btn{display:flex;align-items:center;gap:.5rem;padding:.55rem 1rem;border-radius:var(--r-sm);border:1px solid var(--edge);font-size:.82rem;font-weight:600;color:var(--mist);transition:all .2s;text-decoration:none}
+.ct-soc-btn svg{width:15px;height:15px;flex-shrink:0}
+.ct-soc-btn:hover{border-color:var(--amber2);color:var(--amber2);background:rgba(200,150,60,.06)}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ct-wrap">
+
+  <!-- HERO -->
+  <div class="ct-hero reveal">
+    <h1>
+      {% if current_lang == 'uz' %}Biz bilan bog'laning{% elif current_lang == 'en' %}Get in Touch{% else %}Свяжитесь с нами{% endif %}
+    </h1>
+    <p>{% if current_lang == 'uz' %}Har qanday savol bo'lsa — xabar yozing. Tez javob beramiz!{% elif current_lang == 'en' %}Any questions? Write to us. We respond quickly!{% else %}Есть вопросы? Напишите нам. Мы ответим быстро!{% endif %}</p>
+  </div>
+
+  <div class="ct-grid">
+    <!-- LEFT: contacts -->
+    <div>
+      <div class="ct-cards stagger">
+        <a href="tel:+998901234567" class="ct-card">
+          <div class="ct-card-ico rose">
+            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.04 2.22 2 2 0 012.03 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+          </div>
+          <div>
+            <div class="ct-card-lbl">{% t 'phone' %}</div>
+            <div class="ct-card-val">+998 90 123 45 67</div>
+          </div>
+        </a>
+        <a href="mailto:info@floraluxe.uz" class="ct-card">
+          <div class="ct-card-ico amber">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <div class="ct-card-lbl">Email</div>
+            <div class="ct-card-val">info@floraluxe.uz</div>
+          </div>
+        </a>
+        <div class="ct-card">
+          <div class="ct-card-ico green">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <div class="ct-card-lbl">{% t 'address' %}</div>
+            <div class="ct-card-val">{% if current_lang == 'uz' %}Buxoro shahri, Markaziy{% elif current_lang == 'en' %}Bukhara City Center{% else %}Бухара, Центральный район{% endif %}</div>
+          </div>
+        </div>
+        <a href="https://t.me/floraluxe_uz" target="_blank" rel="noopener" class="ct-card">
+          <div class="ct-card-ico tg">
+            <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+          </div>
+          <div>
+            <div class="ct-card-lbl">Telegram</div>
+            <div class="ct-card-val">@floraluxe_uz</div>
+          </div>
+        </a>
+        <a href="https://instagram.com/flora.luxe.uz" target="_blank" rel="noopener" class="ct-card">
+          <div class="ct-card-ico ig">
+            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </div>
+          <div>
+            <div class="ct-card-lbl">Instagram</div>
+            <div class="ct-card-val">@flora.luxe.uz</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- HOURS -->
+      <div class="ct-hours reveal">
+        <div class="ct-hours-title">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {% t 'work_hours' %}
+        </div>
+        <div class="ct-hours-row">
+          <span class="day">{% if current_lang == 'uz' %}Dushanba — Juma{% elif current_lang == 'en' %}Mon — Fri{% else %}Пн — Пт{% endif %}</span>
+          <span class="time">9:00 — 21:00</span>
+        </div>
+        <div class="ct-hours-row">
+          <span class="day">{% if current_lang == 'uz' %}Shanba{% elif current_lang == 'en' %}Saturday{% else %}Суббота{% endif %}</span>
+          <span class="time">9:00 — 20:00</span>
+        </div>
+        <div class="ct-hours-row">
+          <span class="day">{% if current_lang == 'uz' %}Yakshanba{% elif current_lang == 'en' %}Sunday{% else %}Воскресенье{% endif %}</span>
+          <span class="time">10:00 — 18:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: map + form -->
+    <div class="ct-right">
+      <div class="ct-map reveal">
+        <div class="ct-map-head">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>{% if current_lang == 'uz' %}Bizning manzil{% elif current_lang == 'en' %}Find us{% else %}Мы на карте{% endif %}</span>
+        </div>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2995.5!2d64.4289!3d39.7747!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f4d19b2e6d30e27%3A0xa5f91d93ff82e9b5!2sNavoi%20Street%2C%20Bukhara!5e0!3m2!1sru!2sus!4v1710000000000" allowfullscreen loading="lazy" title="Flora Luxe map"></iframe>
+        <div class="ct-map-addr">
+          <strong>Flora Luxe</strong><br>
+          {% if current_lang == 'uz' %}Buxoro sh., Navoiy ko'chasi, 5{% elif current_lang == 'en' %}Bukhara City Center, Bunyodkor str., 14{% else %}г. Бухара, ул. Навои, д. 5{% endif %}
+        </div>
+      </div>
+
+      <div class="ct-form reveal">
+        <div class="ct-form-title">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          {% if current_lang == 'uz' %}Bizga yozing{% elif current_lang == 'en' %}Write to us{% else %}Написать нам{% endif %}
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem">
+            <div class="ct-field">
+              <label>{% if current_lang == 'uz' %}Ismingiz{% elif current_lang == 'en' %}Your name{% else %}Ваше имя{% endif %}</label>
+              <input type="text" name="name" placeholder="{% if current_lang == 'uz' %}Ism{% elif current_lang == 'en' %}Name{% else %}Имя{% endif %}">
+            </div>
+            <div class="ct-field">
+              <label>{% t 'phone' %}</label>
+              <input type="tel" name="phone" placeholder="+998 90 000 00 00" inputmode="tel">
+            </div>
+          </div>
+          <div class="ct-field">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="you@example.com">
+          </div>
+          <div class="ct-field">
+            <label>{% if current_lang == 'uz' %}Xabar{% elif current_lang == 'en' %}Message{% else %}Сообщение{% endif %}</label>
+            <textarea name="message" rows="3" placeholder="{% if current_lang == 'uz' %}Xabaringizni yozing...{% elif current_lang == 'en' %}Your message...{% else %}Ваше сообщение...{% endif %}"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            {% if current_lang == 'uz' %}Yuborish{% elif current_lang == 'en' %}Send{% else %}Отправить{% endif %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

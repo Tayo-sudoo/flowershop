@@ -1,0 +1,160 @@
+{% extends 'main/base.html' %}
+{% load i18n_tags %}
+{% block title %}{{ flower.name }} — Flora Luxe{% endblock %}
+{% block extra_head %}
+<style>
+.fd-wrap { max-width:1100px; margin:0 auto; padding:2rem 1.5rem 5rem; }
+.breadcrumb { font-size:.8rem; color:var(--text-soft); margin-bottom:1.8rem; display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
+.breadcrumb a { color:var(--gold); }
+.breadcrumb span { opacity:.4; }
+.fd-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; margin-bottom:4rem; }
+@media(max-width:720px){ .fd-grid{grid-template-columns:1fr; gap:1.8rem;} }
+
+/* Image */
+.fd-img-wrap {
+  border-radius:var(--radius-xl); overflow:hidden;
+  box-shadow:var(--shadow-lg); position:relative;
+}
+.fd-img-wrap img { width:100%; height:440px; object-fit:cover; display:block; }
+.fd-img-ph { width:100%; height:440px; background:linear-gradient(135deg,#162019,#251515); display:flex; align-items:center; justify-content:center; font-size:8rem; }
+@media(max-width:720px){ .fd-img-wrap img,.fd-img-ph{height:280px;} }
+
+/* Info */
+.fd-cat { font-size:.72rem; color:var(--text-soft); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem; }
+.fd-name { font-family:var(--font-serif); font-size:clamp(2rem,4vw,3rem); font-weight:700; color:var(--text); line-height:1.1; margin-bottom:.6rem; letter-spacing:-.02em; }
+.fd-stars { display:flex; align-items:center; gap:.3rem; margin-bottom:1rem; font-size:.9rem; color:var(--text-soft); }
+.fd-stars .stars { color:#f5a623; letter-spacing:.1em; }
+.fd-price { font-size:2.2rem; font-weight:700; color:var(--gold); margin-bottom:1.2rem; text-shadow:0 0 20px rgba(212,168,67,.2); }
+.fd-desc { color:var(--text-soft); font-size:.93rem; line-height:1.75; margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
+.fd-meta { display:flex; flex-direction:column; gap:.6rem; margin-bottom:1.8rem; }
+.fd-meta-row { display:flex; align-items:center; gap:.6rem; font-size:.86rem; }
+.fd-meta-row .lbl { color:var(--text-soft); width:120px; flex-shrink:0; }
+.fd-meta-row .val { color:var(--text); font-weight:500; }
+.fd-stock { display:inline-flex; align-items:center; gap:.4rem; padding:.3rem .8rem; border-radius:2rem; font-size:.8rem; font-weight:600; }
+.fd-stock.in { background:rgba(39,174,96,.15); color:#27ae60; border:1px solid rgba(39,174,96,.25); }
+.fd-stock.out { background:rgba(192,57,43,.15); color:var(--red); border:1px solid var(--border-red); }
+.fd-actions { display:flex; gap:.8rem; flex-wrap:wrap; }
+.fd-actions .btn { min-width:160px; }
+
+/* Qty picker */
+.qty-wrap { display:flex; align-items:center; gap:.5rem; background:var(--bg-elevated); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:.3rem .5rem; }
+.qty-btn { width:32px; height:32px; border:none; background:transparent; color:var(--text); font-size:1.1rem; cursor:pointer; border-radius:.4rem; transition:background .2s; display:flex; align-items:center; justify-content:center; }
+.qty-btn:hover { background:rgba(255,255,255,.08); }
+.qty-num { font-weight:600; font-size:.95rem; min-width:24px; text-align:center; }
+
+/* Related */
+.related-section { margin-top:3rem; }
+.related-section h2 { font-family:var(--font-serif); font-size:1.8rem; font-weight:700; color:var(--gold); margin-bottom:1.5rem; }
+.rel-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; }
+.rel-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; text-decoration:none; color:inherit; transition:transform .25s; }
+.rel-card:hover { transform:translateY(-5px); }
+.rel-card img { width:100%; height:130px; object-fit:cover; display:block; }
+.rel-body { padding:.75rem 1rem; }
+.rel-body h4 { font-size:.9rem; font-weight:600; color:var(--text); margin-bottom:.2rem; }
+.rel-body span { font-size:.82rem; color:var(--gold); font-weight:600; }
+
+/* Reviews */
+.reviews-section { margin-top:3.5rem; }
+.reviews-section h2 { font-family:var(--font-serif); font-size:1.8rem; font-weight:700; color:var(--gold); margin-bottom:1.5rem; }
+.rev-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1rem 1.2rem; margin-bottom:.8rem; }
+.rev-head { display:flex; align-items:center; gap:.7rem; margin-bottom:.45rem; flex-wrap:wrap; }
+.rev-user { font-weight:600; font-size:.88rem; color:var(--text); }
+.rev-rating { color:#f5a623; font-size:.85rem; }
+.rev-date { font-size:.75rem; color:var(--text-soft); margin-left:auto; }
+.rev-text { font-size:.86rem; color:var(--text-soft); line-height:1.65; }
+.rev-form { background:var(--bg-card); border:1px solid var(--border-red); border-radius:var(--radius-lg); padding:1.5rem; margin-top:1.5rem; }
+.rev-form h3 { font-family:var(--font-serif); font-size:1.25rem; color:var(--gold); margin-bottom:1rem; }
+.rev-form select,.rev-form textarea {
+  width:100%; padding:.72rem 1rem;
+  border:1.5px solid var(--border); border-radius:var(--radius-sm);
+  background:var(--bg-elevated); color:var(--text);
+  font-family:var(--font-sans); font-size:.9rem; outline:none;
+  margin-bottom:.8rem; transition:border-color .2s; min-height:48px;
+}
+.rev-form select:focus,.rev-form textarea:focus { border-color:var(--red); }
+.no-rev { color:var(--text-soft); font-style:italic; font-size:.88rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fd-wrap">
+  <div class="breadcrumb">
+    <a href="{% url 'catalog' %}">{% t 'catalog' %}</a>
+    <span>›</span>
+    <span>{{ flower.name }}</span>
+  </div>
+
+  <div class="fd-grid reveal">
+    <!-- Image -->
+    <div class="fd-img-wrap">
+      {% if flower.image %}
+        <img src="{{ flower.image.url }}" alt="{{ flower.name }}">
+      {% else %}
+        <div class="fd-img-ph">🌸</div>
+      {% endif %}
+    </div>
+
+    <!-- Info -->
+    <div class="fd-info">
+      <div class="fd-cat">{{ flower.category.name }}</div>
+      <h1 class="fd-name">{{ flower.name }}</h1>
+      {% if reviews %}
+      <div class="fd-stars">
+        <span class="stars">⭐⭐⭐⭐⭐</span>
+        <span>({{ reviews|length }} {% if current_lang == 'uz' %}sharh{% elif current_lang == 'en' %}reviews{% else %}отзывов{% endif %})</span>
+      </div>
+      {% endif %}
+      <div class="fd-price">{{ flower.price }} {% t 'price' %}</div>
+      <p class="fd-desc">{{ flower.description }}</p>
+      <div class="fd-actions">
+        <a href="{% url 'add_to_cart' flower.pk %}" class="btn btn-primary">🛒 {% t 'add_to_cart' %}</a>
+        <a href="{% url 'catalog' %}" class="btn btn-outline">← {% t 'back_to_catalog' %}</a>
+      </div>
+    </div>
+  </div>
+
+  {% if related_flowers %}
+  <div class="related-section reveal">
+    <h2>{% t 'you_may_also_like' %}</h2>
+    <div class="rel-grid stagger">
+      {% for f in related_flowers %}
+      <a href="{% url 'flower_detail' f.pk %}" class="rel-card">
+        {% if f.image %}<img src="{{ f.image.url }}" alt="{{ f.name }}">{% endif %}
+        <div class="rel-body"><h4>{{ f.name }}</h4><span>{{ f.price }} {% t 'price' %}</span></div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="reviews-section reveal">
+    <h2>{% t 'reviews' %}</h2>
+    {% for r in reviews %}
+    <div class="rev-card">
+      <div class="rev-head">
+        <span class="rev-user">{{ r.user.username }}</span>
+        <span class="rev-rating">{% for i in "12345" %}{% if forloop.counter <= r.rating %}⭐{% endif %}{% endfor %}</span>
+      </div>
+      <div class="rev-text">{{ r.text }}</div>
+    </div>
+    {% empty %}
+    <p class="no-rev">{% t 'no_reviews' %}</p>
+    {% endfor %}
+    {% if user.is_authenticated %}
+    <form method="post" action="{% url 'add_review' %}" class="rev-form">
+      {% csrf_token %}<input type="hidden" name="flower_id" value="{{ flower.pk }}">
+      <h3>{% t 'write_review' %}</h3>
+      <select name="rating">
+        <option value="5">⭐⭐⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="1">⭐</option>
+      </select>
+      <textarea name="text" rows="4" placeholder="{% t 'your_review' %}..."></textarea>
+      <button type="submit" class="btn btn-primary">{% t 'submit_review' %}</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

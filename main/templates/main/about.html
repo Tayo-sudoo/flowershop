@@ -1,0 +1,202 @@
+{% extends 'main/base.html' %}
+{% load i18n_tags %}
+{% block title %}{% if current_lang == 'uz' %}Biz haqimizda{% elif current_lang == 'en' %}About Us{% else %}О нас{% endif %} — Flora Luxe{% endblock %}
+{% block extra_head %}
+<style>
+.about-wrap{max-width:1020px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+
+/* HERO */
+.ab-hero{position:relative;overflow:hidden;border-radius:var(--r-2xl);background:linear-gradient(140deg,var(--ink3) 0%,#1e0d0b 100%);border:1px solid var(--edge2);padding:4rem 2.5rem 3.5rem;text-align:center;margin-bottom:2.5rem;box-shadow:var(--sh-lg)}
+.ab-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(181,49,42,.13),transparent 65%);pointer-events:none}
+.ab-hero-deco{position:absolute;top:1.2rem;right:1.8rem;opacity:.07;font-size:5rem;line-height:1;pointer-events:none;user-select:none}
+.ab-hero-eyebrow{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);background:rgba(200,150,60,.1);border:1px solid rgba(200,150,60,.2);padding:.3rem .9rem;border-radius:2rem;margin-bottom:1rem}
+.ab-hero h1{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.4rem);font-weight:700;color:var(--amber2);margin-bottom:.7rem;letter-spacing:-.02em}
+.ab-hero p{color:var(--mist);font-size:1rem;max-width:540px;margin:0 auto;line-height:1.75}
+
+/* STATS */
+.ab-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2.5rem}
+.ab-stat{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-lg);padding:1.5rem 1rem;text-align:center;box-shadow:var(--sh-sm);transition:border-color .2s,transform .2s}
+.ab-stat:hover{border-color:rgba(200,150,60,.3);transform:translateY(-3px)}
+.ab-stat-n{font-family:var(--serif);font-size:2.6rem;font-weight:700;color:var(--amber2);line-height:1}
+.ab-stat-l{font-size:.72rem;color:var(--mist);margin-top:.3rem;text-transform:uppercase;letter-spacing:.07em}
+@media(max-width:600px){.ab-stats{grid-template-columns:repeat(2,1fr)}}
+
+/* WHO WE ARE */
+.ab-section-title{font-family:var(--serif);font-size:1.6rem;font-weight:700;color:var(--amber2);margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem}
+.ab-section-title svg{width:22px;height:22px;stroke:var(--rose2);fill:none;stroke-width:1.8;stroke-linecap:round;flex-shrink:0}
+
+.ab-story{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-xl);padding:2rem 2rem 1.8rem;margin-bottom:2rem;box-shadow:var(--sh-md)}
+.ab-story p{color:var(--mist);line-height:1.85;font-size:.93rem;margin-bottom:.9rem}
+.ab-story p:last-child{margin-bottom:0}
+.ab-story strong{color:var(--cream2);font-weight:600}
+
+/* VALUES GRID */
+.ab-values{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem}
+@media(max-width:580px){.ab-values{grid-template-columns:1fr}}
+.ab-val{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-lg);padding:1.5rem;display:flex;gap:1rem;align-items:flex-start;transition:border-color .2s}
+.ab-val:hover{border-color:rgba(200,150,60,.25)}
+.ab-val-ico{width:44px;height:44px;border-radius:var(--r-sm);background:var(--ink3);border:1px solid var(--edge);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ab-val-ico svg{width:20px;height:20px;stroke:var(--amber);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ab-val h3{font-family:var(--serif);font-size:1.1rem;font-weight:600;color:var(--cream);margin-bottom:.3rem}
+.ab-val p{font-size:.83rem;color:var(--mist);line-height:1.7}
+
+/* TEAM */
+.ab-team{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+@media(max-width:640px){.ab-team{grid-template-columns:1fr 1fr}}
+@media(max-width:400px){.ab-team{grid-template-columns:1fr}}
+.ab-member{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-lg);padding:1.4rem 1.2rem;text-align:center;transition:border-color .2s}
+.ab-member:hover{border-color:rgba(200,150,60,.25)}
+.ab-member-avatar{width:64px;height:64px;border-radius:50%;background:var(--ink3);border:2px solid rgba(200,150,60,.25);margin:0 auto .8rem;display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+.ab-member h4{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--cream);margin-bottom:.2rem}
+.ab-member span{font-size:.75rem;color:var(--mist)}
+
+/* AWARDS */
+.ab-awards{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:2rem}
+.ab-award{display:flex;align-items:center;gap:.5rem;background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-md);padding:.7rem 1.1rem;font-size:.8rem;color:var(--mist)}
+.ab-award svg{width:16px;height:16px;stroke:var(--amber);fill:none;stroke-width:2;flex-shrink:0}
+
+/* CTA */
+.ab-cta{background:linear-gradient(135deg,var(--ink3),#1e0d0b);border:1px solid var(--edge2);border-radius:var(--r-xl);padding:2.5rem;text-align:center;box-shadow:var(--sh-md)}
+.ab-cta h2{font-family:var(--serif);font-size:1.9rem;font-weight:700;color:var(--amber2);margin-bottom:.6rem}
+.ab-cta p{color:var(--mist);font-size:.9rem;margin-bottom:1.5rem}
+.ab-cta-btns{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-wrap">
+
+  <!-- HERO -->
+  <div class="ab-hero reveal">
+    <div class="ab-hero-deco">✿</div>
+    <div class="ab-hero-eyebrow">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Flora Luxe — Since 2020
+    </div>
+    <h1>{% if current_lang == 'uz' %}Biz haqimizda{% elif current_lang == 'en' %}About Flora Luxe{% else %}О компании Flora Luxe{% endif %}</h1>
+    <p>{% if current_lang == 'uz' %}Buxoroning eng ishonchli va zamonaviy gullar do'koni. Har bir gul — siz uchun tanlangan.{% elif current_lang == 'en' %}Bukhara's most trusted premium flower shop. Every bouquet crafted with care for you.{% else %}Самый надёжный и современный цветочный магазин Бухараа. Каждый букет — с душой.{% endif %}</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="ab-stats stagger">
+    <div class="ab-stat">
+      <div class="ab-stat-n">5+</div>
+      <div class="ab-stat-l">{% if current_lang == 'uz' %}Yil tajriba{% elif current_lang == 'en' %}Years{% else %}Лет опыта{% endif %}</div>
+    </div>
+    <div class="ab-stat">
+      <div class="ab-stat-n">10k+</div>
+      <div class="ab-stat-l">{% if current_lang == 'uz' %}Baxtli mijozlar{% elif current_lang == 'en' %}Happy clients{% else %}Довольных клиентов{% endif %}</div>
+    </div>
+    <div class="ab-stat">
+      <div class="ab-stat-n">200+</div>
+      <div class="ab-stat-l">{% if current_lang == 'uz' %}Gul turlari{% elif current_lang == 'en' %}Flower types{% else %}Видов цветов{% endif %}</div>
+    </div>
+    <div class="ab-stat">
+      <div class="ab-stat-n">24/7</div>
+      <div class="ab-stat-l">{% if current_lang == 'uz' %}Yetkazib berish{% elif current_lang == 'en' %}Delivery{% else %}Доставка{% endif %}</div>
+    </div>
+  </div>
+
+  <!-- STORY -->
+  <div class="ab-story reveal">
+    <div class="ab-section-title">
+      <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      {% if current_lang == 'uz' %}Bizning tariximiz{% elif current_lang == 'en' %}Our Story{% else %}Наша история{% endif %}
+    </div>
+    <p>{% if current_lang == 'uz' %}<strong>Flora Luxe</strong> 2019-yilda Buxoro markazida kichik gullar ustaxonasi sifatida boshlangan. Biz doim bitta maqsadga ega bo'lganmiz — har bir mijozga eng yangi va chiroyli guldastalarni yetkazib berish.{% elif current_lang == 'en' %}<strong>Flora Luxe</strong> started in 2019 as a small flower studio in central Bukhara. We've always had one goal — delivering the freshest, most beautiful bouquets to every customer.{% else %}<strong>Flora Luxe</strong> начала свой путь в 2019 году как небольшая цветочная студия в центре Бухараа. У нас всегда была одна цель — доставлять самые свежие и красивые букеты каждому покупателю.{% endif %}</p>
+    <p>{% if current_lang == 'uz' %}Bugungi kunda biz Buxoroning yetakchi gullar do'konlaridan birimiz. Bizning floristlarimiz Gollandiya, Kolumbiya va mahalliy bog'lardan olingan gullar bilan ishlaydi. Har bir buyurtma alohida e'tibor bilan tayyorlanadi.{% elif current_lang == 'en' %}Today we are one of Bukhara's leading flower shops. Our florists work with flowers from the Netherlands, Colombia, and local gardens. Every order is prepared with individual attention.{% else %}Сегодня мы — один из ведущих цветочных магазинов Бухараа. Наши флористы работают с цветами из Нидерландов, Колумбии и местных садов. Каждый заказ готовится с индивидуальным вниманием.{% endif %}</p>
+    <p>{% if current_lang == 'uz' %}Biz <strong>2 soat ichida</strong> Buxoro bo'ylab yetkazib beramiz. Minimal buyurtma miqdori yo'q — bitta guldan tortib katta to'y bezatishigacha.{% elif current_lang == 'en' %}We deliver across Bukhara within <strong>2 hours</strong>. No minimum order — from a single flower to a full wedding decoration.{% else %}Мы доставляем по всему Бухарау за <strong>2 часа</strong>. Нет минимальной суммы заказа — от одного цветка до полного свадебного оформления.{% endif %}</p>
+  </div>
+
+  <!-- VALUES -->
+  <div style="margin-bottom:1rem" class="reveal">
+    <div class="ab-section-title">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      {% if current_lang == 'uz' %}Bizning qadriyatlarimiz{% elif current_lang == 'en' %}Our Values{% else %}Наши ценности{% endif %}
+    </div>
+  </div>
+  <div class="ab-values stagger">
+    <div class="ab-val">
+      <div class="ab-val-ico">
+        <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 100 14A7 7 0 0012 2z"/><path d="M12 6v4l3 2"/><path d="M12 16v6"/></svg>
+      </div>
+      <div>
+        <h3>{% if current_lang == 'uz' %}Yangilik kafolati{% elif current_lang == 'en' %}Freshness Guaranteed{% else %}Гарантия свежести{% endif %}</h3>
+        <p>{% if current_lang == 'uz' %}Barcha gullar har kuni yangilanadi. Agar xursand bo'lmasangiz — pulsiz qaytaramiz.{% elif current_lang == 'en' %}All flowers are restocked daily. Not satisfied? Full refund guaranteed.{% else %}Все цветы обновляются ежедневно. Не довольны — полный возврат без вопросов.{% endif %}</p>
+      </div>
+    </div>
+    <div class="ab-val">
+      <div class="ab-val-ico">
+        <svg viewBox="0 0 24 24"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <div>
+        <h3>{% if current_lang == 'uz' %}Tez yetkazish{% elif current_lang == 'en' %}Fast Delivery{% else %}Быстрая доставка{% endif %}</h3>
+        <p>{% if current_lang == 'uz' %}2 soat ichida. Haftaning 7 kuni, 9:00 dan 21:00 gacha. Shahar bo'ylab.{% elif current_lang == 'en' %}Within 2 hours. 7 days a week, 9am to 9pm. Across the city.{% else %}За 2 часа. 7 дней в неделю, с 9:00 до 21:00. По всему городу.{% endif %}</p>
+      </div>
+    </div>
+    <div class="ab-val">
+      <div class="ab-val-ico">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      </div>
+      <div>
+        <h3>{% if current_lang == 'uz' %}Yurakdan yondashuv{% elif current_lang == 'en' %}Made with Care{% else %}С душой{% endif %}</h3>
+        <p>{% if current_lang == 'uz' %}Har bir guldasta qo'lda tayyorlanadi. Biz har bir buyurtmaga alohida e'tibor beramiz.{% elif current_lang == 'en' %}Every bouquet is handcrafted. We treat each order with individual attention and care.{% else %}Каждый букет собирается вручную. Мы относимся к каждому заказу с индивидуальным вниманием.{% endif %}</p>
+      </div>
+    </div>
+    <div class="ab-val">
+      <div class="ab-val-ico">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      </div>
+      <div>
+        <h3>{% if current_lang == 'uz' %}Hamisha tayyor{% elif current_lang == 'en' %}Always Available{% else %}Всегда на связи{% endif %}</h3>
+        <p>{% if current_lang == 'uz' %}Telegram va WhatsApp orqali 24/7 bog'lanishingiz mumkin. Tez javob beramiz.{% elif current_lang == 'en' %}Reach us 24/7 via Telegram or WhatsApp. We reply fast.{% else %}Пишите нам 24/7 в Telegram или WhatsApp. Отвечаем быстро.{% endif %}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEAM -->
+  <div style="margin-bottom:1rem" class="reveal">
+    <div class="ab-section-title">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      {% if current_lang == 'uz' %}Bizning jamoa{% elif current_lang == 'en' %}Our Team{% else %}Наша команда{% endif %}
+    </div>
+  </div>
+  <div class="ab-team stagger">
+    <div class="ab-member">
+      <div class="ab-member-avatar">👩‍🌾</div>
+      <h4>{% if current_lang == 'uz' %}Nilufar Rahimova{% elif current_lang == 'en' %}Nilufar Rahimova{% else %}Нилюфар Рахимова{% endif %}</h4>
+      <span>{% if current_lang == 'uz' %}Bosh florist{% elif current_lang == 'en' %}Head Florist{% else %}Главный флорист{% endif %}</span>
+    </div>
+    <div class="ab-member">
+      <div class="ab-member-avatar">👨‍💼</div>
+      <h4>{% if current_lang == 'uz' %}Jasur Mirzayev{% elif current_lang == 'en' %}Jasur Mirzayev{% else %}Джасур Мирзаев{% endif %}</h4>
+      <span>{% if current_lang == 'uz' %}Direktor{% elif current_lang == 'en' %}Director{% else %}Директор{% endif %}</span>
+    </div>
+    <div class="ab-member">
+      <div class="ab-member-avatar">👩‍🎨</div>
+      <h4>{% if current_lang == 'uz' %}Mohira Karimova{% elif current_lang == 'en' %}Mohira Karimova{% else %}Мохира Каримова{% endif %}</h4>
+      <span>{% if current_lang == 'uz' %}Dizayner{% elif current_lang == 'en' %}Designer{% else %}Дизайнер{% endif %}</span>
+    </div>
+  </div>
+
+  <!-- AWARDS -->
+  <div class="ab-awards reveal">
+    <div class="ab-award"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>{% if current_lang == 'uz' %}2026 yil eng yaxshi do'kon{% elif current_lang == 'en' %}Best Shop 2026{% else %}Лучший магазин 2026{% endif %}</div>
+    <div class="ab-award"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>{% if current_lang == 'uz' %}Top-5 Buxoro floristlari{% elif current_lang == 'en' %}Top-5 Bukhara Florists{% else %}Топ-5 флористов Бухараа{% endif %}</div>
+    <div class="ab-award"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>{% if current_lang == 'uz' %}Ishonchli hamkor{% elif current_lang == 'en' %}Trusted Partner{% else %}Надёжный партнёр{% endif %}</div>
+  </div>
+
+  <!-- CTA -->
+  <div class="ab-cta reveal">
+    <h2>{% if current_lang == 'uz' %}Buyurtma bering!{% elif current_lang == 'en' %}Order Now{% else %}Сделайте заказ{% endif %}</h2>
+    <p>{% if current_lang == 'uz' %}Sevganlaringizni gullar bilan xursand qiling. Buxoro bo'ylab 2 soatda yetkazib beramiz.{% elif current_lang == 'en' %}Make someone happy with beautiful flowers. Delivered across Bukhara in 2 hours.{% else %}Порадуйте близких красивыми цветами. Доставка по Бухарау за 2 часа.{% endif %}</p>
+    <div class="ab-cta-btns">
+      <a href="{% url 'catalog' %}" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+        {% t 'view_catalog' %}
+      </a>
+      <a href="{% url 'contacts' %}" class="btn btn-outline">{% t 'contacts' %}</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

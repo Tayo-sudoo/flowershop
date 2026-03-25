@@ -1,0 +1,269 @@
+{% extends 'main/base.html' %}
+{% load static %}{% load i18n_tags %}
+{% block title %}{% if current_lang == 'uz' %}Profil{% elif current_lang == 'en' %}Profile{% else %}Профиль{% endif %} — Flora Luxe{% endblock %}
+{% block extra_head %}
+<style>
+.pr-page{max-width:900px;margin:0 auto;padding:2rem 1.5rem 5rem;position:relative;z-index:1}
+
+/* HERO */
+.pr-hero{background:linear-gradient(140deg,var(--ink3) 0%,#1e0d0b 60%,var(--ink3) 100%);border:1px solid var(--edge2);border-radius:var(--r-xl);padding:2rem;display:flex;align-items:center;gap:1.6rem;margin-bottom:1.8rem;box-shadow:var(--sh-lg);animation:prIn .5s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden}
+@keyframes prIn{from{opacity:0;transform:translateY(20px)}}
+.pr-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(181,49,42,.08),transparent 60%);pointer-events:none}
+.pr-avatar-wrap{position:relative;flex-shrink:0}
+.pr-avatar{width:82px;height:82px;border-radius:50%;object-fit:cover;border:2.5px solid rgba(200,150,60,.4);box-shadow:0 4px 20px rgba(0,0,0,.5);background:var(--ink4);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:2rem;font-weight:700;color:var(--amber2);overflow:hidden}
+.pr-avatar img{width:100%;height:100%;object-fit:cover}
+.pr-avatar-btn{position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--rose);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.4);transition:transform .2s}
+.pr-avatar-btn:hover{transform:scale(1.1)}
+.pr-avatar-btn svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round}
+#avatar-input{display:none}
+.pr-info{flex:1;min-width:0}
+.pr-info h2{font-family:var(--serif);font-size:1.65rem;font-weight:700;color:var(--cream);line-height:1.2;margin-bottom:.2rem}
+.pr-info .pr-un{font-size:.82rem;color:var(--mist);margin-bottom:.1rem}
+.pr-info .pr-em{font-size:.8rem;color:var(--mist);opacity:.7}
+.pr-badges{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.6rem}
+.pr-badge{display:inline-flex;align-items:center;gap:.28rem;padding:.2rem .65rem;border-radius:2rem;font-size:.7rem;font-weight:700;background:rgba(74,110,80,.12);color:var(--sage2);border:1px solid var(--edge)}
+.pr-badge.admin{background:rgba(181,49,42,.15);color:var(--rose3);border-color:var(--edge2)}
+.pr-badge svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* TABS */
+.pr-tabs{display:flex;gap:0;margin-bottom:1.5rem;background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-lg);padding:.3rem;overflow-x:auto}
+.pr-tab{flex:1;padding:.6rem .8rem;border:none;background:none;font-family:var(--sans);font-size:.83rem;font-weight:600;color:var(--mist);cursor:pointer;border-radius:var(--r-sm);transition:all .2s;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:.35rem;min-height:40px}
+.pr-tab svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0}
+.pr-tab.active{background:var(--ink4);color:var(--amber2);box-shadow:var(--sh-sm)}
+.pr-tab-panel{display:none;animation:tabIn .28s ease}
+.pr-tab-panel.active{display:block}
+@keyframes tabIn{from{opacity:0;transform:translateY(6px)}}
+
+/* FORM */
+.pr-form-card{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-xl);padding:1.8rem;box-shadow:var(--sh-md)}
+.pr-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:560px){.pr-grid-2{grid-template-columns:1fr}}
+.pr-field{margin-bottom:1rem}
+.pr-field label{display:block;font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mist);margin-bottom:.32rem}
+.pr-field input,.pr-field textarea{width:100%;padding:.7rem 1rem;border:1.5px solid var(--edge);border-radius:var(--r-sm);background:var(--ink3);color:var(--cream);font-family:var(--sans);font-size:.88rem;outline:none;transition:border-color .2s;min-height:46px;-webkit-appearance:none}
+.pr-field input::placeholder,.pr-field textarea::placeholder{color:rgba(240,235,224,.22)}
+.pr-field input:focus,.pr-field textarea:focus{border-color:var(--rose)}
+.pr-field textarea{resize:vertical}
+
+/* ORDERS */
+.ord-card{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-lg);padding:1.1rem 1.3rem;margin-bottom:.8rem;box-shadow:var(--sh-sm);transition:border-color .2s}
+.ord-card:hover{border-color:rgba(200,150,60,.2)}
+.ord-head{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;margin-bottom:.7rem}
+.ord-id{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--amber2)}
+.ord-date{font-size:.75rem;color:var(--mist)}
+.ord-total{margin-left:auto;font-weight:700;color:var(--amber2);font-size:.9rem}
+.ord-status{padding:.18rem .68rem;border-radius:2rem;font-size:.68rem;font-weight:700;letter-spacing:.04em}
+.s-new{background:rgba(181,49,42,.15);color:var(--rose3)}
+.s-processing{background:rgba(243,156,18,.12);color:#f39c12}
+.s-delivered{background:rgba(46,204,113,.1);color:#2ecc71}
+.s-cancelled{background:rgba(150,150,150,.1);color:#888}
+.ord-items{list-style:none}
+.ord-items li{display:flex;justify-content:space-between;padding:.3rem 0;border-top:1px dashed var(--edge);font-size:.82rem;color:var(--mist)}
+.ord-items li:first-child{border-top:none}
+.ord-items li .fl-name{display:flex;align-items:center;gap:.4rem}
+.ord-items li .fl-name svg{width:12px;height:12px;stroke:var(--rose2);fill:none;stroke-width:2;flex-shrink:0}
+.ord-addr{font-size:.76rem;color:var(--mist);margin-top:.5rem;display:flex;align-items:center;gap:.35rem;opacity:.75}
+.ord-addr svg{width:12px;height:12px;stroke:var(--sage2);fill:none;stroke-width:2;flex-shrink:0}
+.pr-empty{text-align:center;padding:3rem 1rem;color:var(--mist)}
+.pr-empty svg{width:48px;height:48px;stroke:var(--edge);fill:none;stroke-width:1.5;margin:0 auto .8rem;display:block}
+
+/* ADMIN */
+.adm-card{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-lg);padding:1.2rem 1.4rem;display:flex;align-items:center;gap:1rem;margin-bottom:.8rem;box-shadow:var(--sh-sm);transition:border-color .2s}
+.adm-card:hover{border-color:rgba(181,49,42,.25)}
+.adm-ico{width:44px;height:44px;border-radius:var(--r-sm);background:rgba(181,49,42,.12);border:1px solid var(--edge2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.adm-ico svg{width:20px;height:20px;stroke:var(--rose2);fill:none;stroke-width:1.8;stroke-linecap:round}
+.adm-card h3{font-family:var(--serif);font-size:1.05rem;font-weight:600;color:var(--cream);margin-bottom:.15rem}
+.adm-card p{font-size:.8rem;color:var(--mist)}
+.adm-link{margin-left:auto;padding:.5rem 1.1rem;border:1.5px solid var(--edge2);border-radius:var(--r-sm);color:var(--rose3);font-size:.8rem;font-weight:700;text-decoration:none;white-space:nowrap;transition:all .2s}
+.adm-link:hover{background:var(--rose);color:#fff;border-color:var(--rose)}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pr-page">
+
+  <!-- HERO -->
+  <div class="pr-hero">
+    <div class="pr-avatar-wrap">
+      <form method="post" enctype="multipart/form-data" id="avatarForm" style="display:none">
+        {% csrf_token %}
+        <input type="file" id="avatar-input" name="avatar" accept="image/*">
+      </form>
+      <div class="pr-avatar" id="prAvatar">
+        {% if profile.avatar %}
+          <img src="{{ profile.avatar.url }}" alt="">
+        {% else %}
+          {{ user.first_name|first|default:user.username|first|upper }}
+        {% endif %}
+      </div>
+      <button class="pr-avatar-btn" onclick="document.getElementById('avatar-input').click()" title="{% if current_lang == 'uz' %}Rasmni o'zgartirish{% elif current_lang == 'en' %}Change photo{% else %}Изменить фото{% endif %}">
+        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
+    </div>
+    <div class="pr-info">
+      <h2>{{ user.get_full_name|default:user.username }}</h2>
+      <div class="pr-un">@{{ user.username }}</div>
+      {% if user.email %}<div class="pr-em">{{ user.email }}</div>{% endif %}
+      <div class="pr-badges">
+        <span class="pr-badge">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          {{ orders|length }} {% if current_lang == 'uz' %}buyurtma{% elif current_lang == 'en' %}orders{% else %}заказов{% endif %}
+        </span>
+        {% if user.is_staff %}
+        <span class="pr-badge admin">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          {% if current_lang == 'uz' %}Admin{% elif current_lang == 'en' %}Admin{% else %}Администратор{% endif %}
+        </span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="pr-tabs">
+    <button class="pr-tab active" onclick="switchTab('edit',this)">
+      <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      {% if current_lang == 'uz' %}Tahrirlash{% elif current_lang == 'en' %}Edit{% else %}Редактировать{% endif %}
+    </button>
+    <button class="pr-tab" onclick="switchTab('orders',this)">
+      <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h5a2 2 0 012 2v5a2 2 0 01-2 2h-1l-2 3-2-3h-1a2 2 0 01-2-2v-1"/></svg>
+      {% if current_lang == 'uz' %}Buyurtmalar{% elif current_lang == 'en' %}Orders{% else %}Заказы{% endif %} ({{ orders|length }})
+    </button>
+    {% if user.is_staff %}
+    <button class="pr-tab" onclick="switchTab('admin',this)">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      {% if current_lang == 'uz' %}Boshqaruv{% elif current_lang == 'en' %}Admin{% else %}Управление{% endif %}
+    </button>
+    {% endif %}
+  </div>
+
+  <!-- EDIT TAB -->
+  <div class="pr-tab-panel active" id="tab-edit">
+    <div class="pr-form-card">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="pr-grid-2">
+          <div class="pr-field">
+            <label>{% if current_lang == 'uz' %}Ism{% elif current_lang == 'en' %}First name{% else %}Имя{% endif %}</label>
+            <input type="text" name="first_name" value="{{ user.first_name }}" placeholder="{% if current_lang == 'uz' %}Ismingiz{% elif current_lang == 'en' %}Your name{% else %}Ваше имя{% endif %}">
+          </div>
+          <div class="pr-field">
+            <label>{% if current_lang == 'uz' %}Familiya{% elif current_lang == 'en' %}Last name{% else %}Фамилия{% endif %}</label>
+            <input type="text" name="last_name" value="{{ user.last_name }}" placeholder="{% if current_lang == 'uz' %}Familiyangiz{% elif current_lang == 'en' %}Your surname{% else %}Фамилия{% endif %}">
+          </div>
+        </div>
+        <div class="pr-field">
+          <label>Email</label>
+          <input type="email" name="email" value="{{ user.email }}" placeholder="you@example.com">
+        </div>
+        <div class="pr-grid-2">
+          <div class="pr-field">
+            <label>{% t 'phone' %}</label>
+            <input type="tel" name="phone" value="{{ profile.phone }}" placeholder="+998 90 000 00 00" inputmode="tel">
+          </div>
+          <div class="pr-field">
+            <label>{% t 'address' %}</label>
+            <input type="text" name="address" value="{{ profile.address }}" placeholder="{% if current_lang == 'uz' %}Shahar, ko'cha{% elif current_lang == 'en' %}City, street{% else %}Город, улица{% endif %}">
+          </div>
+        </div>
+        <input type="file" name="avatar" id="avatar-input-form" accept="image/*" style="display:none">
+        <div style="display:flex;gap:.7rem;align-items:center;flex-wrap:wrap">
+          <button type="submit" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            {% if current_lang == 'uz' %}Saqlash{% elif current_lang == 'en' %}Save{% else %}Сохранить{% endif %}
+          </button>
+          <button type="button" class="btn btn-outline" onclick="document.getElementById('avatar-input-form').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            {% if current_lang == 'uz' %}Rasm{% elif current_lang == 'en' %}Photo{% else %}Фото{% endif %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ORDERS TAB -->
+  <div class="pr-tab-panel" id="tab-orders">
+    {% if orders %}
+      {% for order in orders %}
+      <div class="ord-card">
+        <div class="ord-head">
+          <span class="ord-id">
+            {% if current_lang == 'uz' %}Buyurtma #{{ order.id }}{% elif current_lang == 'en' %}Order #{{ order.id }}{% else %}Заказ #{{ order.id }}{% endif %}
+          </span>
+          <span class="ord-date">{{ order.created_at|date:"d.m.Y  H:i" }}</span>
+          <span class="ord-status s-{{ order.status }}">{{ order.get_status_display }}</span>
+          <span class="ord-total">{{ order.total_price|floatformat:0 }} {% t 'price' %}</span>
+        </div>
+        <ul class="ord-items">
+          {% for item in order.items.all %}
+          <li>
+            <span class="fl-name">
+              <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 100 14A7 7 0 0012 2z"/><path d="M12 16v6"/></svg>
+              {{ item.flower.name }} × {{ item.quantity }}
+            </span>
+            <span>{{ item.price|floatformat:0 }} {% t 'price' %}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% if order.address %}
+        <div class="ord-addr">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          {{ order.address }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="pr-empty">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        <p style="margin-bottom:.8rem">{% if current_lang == 'uz' %}Buyurtmalar yo'q{% elif current_lang == 'en' %}No orders yet{% else %}Заказов пока нет{% endif %}</p>
+        <a href="{% url 'catalog' %}" class="btn btn-primary" style="display:inline-flex">
+          {% t 'view_catalog' %}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if user.is_staff %}
+  <!-- ADMIN TAB -->
+  <div class="pr-tab-panel" id="tab-admin">
+    <div class="adm-card">
+      <div class="adm-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+      <div><h3>{% if current_lang == 'uz' %}Admin panel{% elif current_lang == 'en' %}Admin panel{% else %}Панель администратора{% endif %}</h3><p>{% if current_lang == 'uz' %}To'liq boshqaruv{% elif current_lang == 'en' %}Full management{% else %}Полное управление{% endif %}</p></div>
+      <a href="/admin/" class="adm-link" target="_blank">{% if current_lang == 'uz' %}Ochish{% elif current_lang == 'en' %}Open{% else %}Открыть{% endif %} →</a>
+    </div>
+    <div class="adm-card">
+      <div class="adm-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+      <div><h3>{% if current_lang == 'uz' %}Gul qo'shish{% elif current_lang == 'en' %}Add flower{% else %}Добавить цветок{% endif %}</h3><p>{% if current_lang == 'uz' %}Yangi tovar qo'shish{% elif current_lang == 'en' %}Add new product{% else %}Новый товар{% endif %}</p></div>
+      <a href="/admin/main/flower/add/" class="adm-link" target="_blank">{% if current_lang == 'uz' %}Qo'shish{% elif current_lang == 'en' %}Add{% else %}Добавить{% endif %} →</a>
+    </div>
+    <div class="adm-card">
+      <div class="adm-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+      <div><h3>{% if current_lang == 'uz' %}Foydalanuvchilar{% elif current_lang == 'en' %}Users{% else %}Пользователи{% endif %}</h3><p>{% if current_lang == 'uz' %}Hisoblarni boshqarish{% elif current_lang == 'en' %}Manage accounts{% else %}Управление аккаунтами{% endif %}</p></div>
+      <a href="/admin/auth/user/" class="adm-link" target="_blank">{% if current_lang == 'uz' %}Ko'rish{% elif current_lang == 'en' %}View{% else %}Смотреть{% endif %} →</a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.pr-tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.pr-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+// Avatar file change → submit immediately
+document.getElementById('avatar-input') && document.getElementById('avatar-input').addEventListener('change', function(){
+  if (this.files && this.files[0]) {
+    document.getElementById('avatarForm').submit();
+  }
+});
+document.getElementById('avatar-input-form') && document.getElementById('avatar-input-form').addEventListener('change', function(){
+  if (this.files && this.files[0]) {
+    this.closest('form').submit();
+  }
+});
+</script>
+{% endblock %}

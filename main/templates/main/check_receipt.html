@@ -1,0 +1,136 @@
+{% extends 'main/base.html' %}
+{% load i18n_tags %}
+{% block title %}{% if current_lang == 'uz' %}Chekni tekshirish{% elif current_lang == 'en' %}Verify Receipt{% else %}Проверка чека{% endif %} — Flora Luxe{% endblock %}
+{% block extra_head %}
+<style>
+.cr-page{max-width:580px;margin:0 auto;padding:2.5rem 1.5rem 5rem;position:relative;z-index:1}
+.cr-hero{text-align:center;margin-bottom:2rem}
+.cr-hero h1{font-family:var(--serif);font-size:2rem;font-weight:700;color:var(--amber2);margin-bottom:.5rem}
+.cr-hero p{color:var(--mist);font-size:.88rem}
+.cr-form-card{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-xl);padding:1.8rem;box-shadow:var(--sh-md);margin-bottom:1.5rem}
+.cr-form-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--amber);margin-bottom:.9rem;display:flex;align-items:center;gap:.4rem}
+.cr-form-title svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.cr-input-row{display:flex;gap:.6rem}
+.cr-input{flex:1;padding:.75rem 1.1rem;border:1.5px solid var(--edge);border-radius:var(--r-sm);background:var(--ink3);color:var(--cream);font-family:'Courier New',monospace;font-size:1rem;outline:none;transition:border-color .2s;letter-spacing:.15em;text-transform:uppercase;min-height:50px}
+.cr-input:focus{border-color:var(--rose)}
+.cr-input::placeholder{font-family:var(--sans);text-transform:none;letter-spacing:0;color:rgba(240,235,224,.25)}
+.cr-hint{font-size:.75rem;color:var(--mist);margin-top:.55rem;display:flex;align-items:center;gap:.3rem;opacity:.7}
+.cr-hint svg{width:12px;height:12px;stroke:var(--sage2);fill:none;stroke-width:2;flex-shrink:0}
+
+/* RESULT */
+.cr-not-found{background:rgba(181,49,42,.08);border:1px solid var(--edge2);border-radius:var(--r-lg);padding:1.4rem;text-align:center}
+.cr-not-found svg{width:40px;height:40px;stroke:var(--rose3);fill:none;stroke-width:1.5;margin:0 auto .7rem;display:block}
+.cr-not-found p{color:var(--mist);font-size:.88rem}
+
+.cr-result{background:var(--ink2);border:1px solid rgba(46,204,113,.2);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-md)}
+.cr-result-header{background:linear-gradient(135deg,rgba(46,204,113,.08),transparent);padding:1.2rem 1.5rem;border-bottom:1px solid rgba(46,204,113,.15);display:flex;align-items:center;gap:.9rem}
+.cr-ok-ico{width:40px;height:40px;border-radius:50%;background:rgba(46,204,113,.12);border:1.5px solid rgba(46,204,113,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cr-ok-ico svg{width:20px;height:20px;stroke:#2ecc71;fill:none;stroke-width:2.5;stroke-linecap:round}
+.cr-result-title{font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--cream)}
+.cr-result-code{font-size:.75rem;color:var(--mist);margin-top:.15rem;font-family:'Courier New',monospace;letter-spacing:.1em}
+.cr-result-body{padding:1.2rem 1.5rem}
+.crrow{display:flex;justify-content:space-between;align-items:flex-start;padding:.4rem 0;border-bottom:1px dashed var(--edge);font-size:.84rem}
+.crrow:last-of-type{border-bottom:none}
+.crrow-lbl{color:var(--mist);display:flex;align-items:center;gap:.35rem;flex-shrink:0}
+.crrow-lbl svg{width:13px;height:13px;stroke:var(--amber);fill:none;stroke-width:1.8;flex-shrink:0}
+.crrow-val{color:var(--cream2);font-weight:500;text-align:right;max-width:55%}
+.cr-items{padding:.5rem 1.5rem 1rem;border-top:1px dashed var(--edge)}
+.cr-items-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);margin-bottom:.6rem}
+.critem{display:flex;justify-content:space-between;padding:.3rem 0;border-top:1px dashed var(--edge);font-size:.81rem;color:var(--mist)}
+.critem:first-of-type{border-top:none}
+.cr-total{display:flex;justify-content:space-between;padding:1rem 1.5rem;border-top:2px solid var(--edge);background:rgba(200,150,60,.04)}
+.cr-total span{font-size:.85rem;color:var(--mist)}
+.cr-total strong{font-family:var(--serif);font-size:1.4rem;font-weight:700;color:var(--amber2)}
+.status-pill{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .75rem;border-radius:2rem;font-size:.7rem;font-weight:700}
+.s-new{background:rgba(181,49,42,.15);color:var(--rose3)}
+.s-processing{background:rgba(243,156,18,.12);color:#f39c12}
+.s-delivered{background:rgba(46,204,113,.1);color:#2ecc71}
+.s-cancelled{background:rgba(150,150,150,.1);color:#888}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cr-page">
+  <div class="cr-hero reveal">
+    <h1>{% if current_lang == 'uz' %}Chekni tekshirish{% elif current_lang == 'en' %}Verify Receipt{% else %}Проверка чека{% endif %}</h1>
+    <p>{% if current_lang == 'uz' %}Buyurtma kodini kiriting — buyurtmangizni tekshiring{% elif current_lang == 'en' %}Enter your order code to verify the receipt{% else %}Введите код чека чтобы проверить ваш заказ{% endif %}</p>
+  </div>
+
+  <div class="cr-form-card reveal">
+    <div class="cr-form-title">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      {% if current_lang == 'uz' %}Kodni kiriting{% elif current_lang == 'en' %}Enter code{% else %}Введите код{% endif %}
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="cr-input-row">
+        <input type="text" name="code" class="cr-input" value="{{ code }}" placeholder="FL-XXXXXXXX" maxlength="12" autocomplete="off" autofocus>
+        <button type="submit" class="btn btn-primary" style="padding:.75rem 1.3rem;border-radius:var(--r-sm)">
+          {% if current_lang == 'uz' %}Tekshirish{% elif current_lang == 'en' %}Verify{% else %}Проверить{% endif %}
+        </button>
+      </div>
+      <div class="cr-hint">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        {% if current_lang == 'uz' %}Kod "FL-" bilan boshlanadi, masalan: FL-X7K2M9P1{% elif current_lang == 'en' %}Code starts with "FL-", e.g. FL-X7K2M9P1{% else %}Код начинается с "FL-", например: FL-X7K2M9P1{% endif %}
+      </div>
+    </form>
+  </div>
+
+  {% if code and not order and error %}
+  <div class="cr-not-found reveal">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <p><strong style="color:var(--rose3);display:block;margin-bottom:.3rem">{{ error }}</strong>
+    {% if current_lang == 'uz' %}Kodni tekshiring va qayta urinib ko'ring.{% elif current_lang == 'en' %}Please check the code and try again.{% else %}Проверьте код и попробуйте ещё раз.{% endif %}</p>
+  </div>
+  {% endif %}
+
+  {% if order %}
+  <div class="cr-result reveal">
+    <div class="cr-result-header">
+      <div class="cr-ok-ico">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div>
+        <div class="cr-result-title">{% if current_lang == 'uz' %}Buyurtma topildi!{% elif current_lang == 'en' %}Order found!{% else %}Заказ найден!{% endif %}</div>
+        <div class="cr-result-code">{{ order.receipt_code }}</div>
+      </div>
+    </div>
+    <div class="cr-result-body">
+      <div class="crrow">
+        <span class="crrow-lbl"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>{% if current_lang == 'uz' %}Buyurtma #{% elif current_lang == 'en' %}Order #{% else %}Заказ #{% endif %}</span>
+        <span class="crrow-val">{{ order.id }}</span>
+      </div>
+      <div class="crrow">
+        <span class="crrow-lbl"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>{% if current_lang == 'uz' %}Sana{% elif current_lang == 'en' %}Date{% else %}Дата{% endif %}</span>
+        <span class="crrow-val">{{ order.created_at|date:"d.m.Y  H:i" }}</span>
+      </div>
+      <div class="crrow">
+        <span class="crrow-lbl"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>{% if current_lang == 'uz' %}Mijoz{% elif current_lang == 'en' %}Customer{% else %}Клиент{% endif %}</span>
+        <span class="crrow-val">{{ order.user.get_full_name|default:order.user.username }}</span>
+      </div>
+      <div class="crrow">
+        <span class="crrow-lbl"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>{% t 'address' %}</span>
+        <span class="crrow-val">{{ order.address }}</span>
+      </div>
+      <div class="crrow">
+        <span class="crrow-lbl"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>{% if current_lang == 'uz' %}Holati{% elif current_lang == 'en' %}Status{% else %}Статус{% endif %}</span>
+        <span class="status-pill s-{{ order.status }}">{{ order.get_status_display }}</span>
+      </div>
+    </div>
+    <div class="cr-items">
+      <div class="cr-items-title">{% if current_lang == 'uz' %}Tovarlar{% elif current_lang == 'en' %}Items{% else %}Товары{% endif %}</div>
+      {% for item in order.items.all %}
+      <div class="critem">
+        <span>{{ item.flower.name }} × {{ item.quantity }}</span>
+        <span>{{ item.price|floatformat:0 }} {% t 'price' %}</span>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="cr-total">
+      <span>{% t 'total' %}:</span>
+      <strong>{{ order.total_price|floatformat:0 }} {% t 'price' %}</strong>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

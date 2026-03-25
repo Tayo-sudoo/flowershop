@@ -1,0 +1,232 @@
+{% extends 'main/base.html' %}
+{% load i18n_tags %}
+{% block title %}{% if current_lang == 'uz' %}Buyurtma qabul qilindi{% elif current_lang == 'en' %}Order Confirmed{% else %}Заказ оформлен{% endif %} — Flora Luxe{% endblock %}
+{% block extra_head %}
+<style>
+.os-page{max-width:640px;margin:0 auto;padding:2.5rem 1.5rem 5rem;position:relative;z-index:1}
+
+/* SUCCESS BANNER */
+.os-banner{background:linear-gradient(140deg,var(--ink3),#0e1f10);border:1px solid rgba(46,204,113,.2);border-radius:var(--r-2xl);padding:2.5rem 2rem;text-align:center;margin-bottom:1.5rem;box-shadow:var(--sh-lg);animation:osIn .6s cubic-bezier(.22,1,.36,1)}
+@keyframes osIn{from{opacity:0;transform:translateY(30px) scale(.96)}}
+.os-check{width:68px;height:68px;border-radius:50%;background:rgba(46,204,113,.12);border:2px solid rgba(46,204,113,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem}
+.os-check svg{width:32px;height:32px;stroke:#2ecc71;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.os-banner h1{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.2rem);font-weight:700;color:var(--cream);margin-bottom:.5rem}
+.os-banner p{color:var(--mist);font-size:.9rem;max-width:380px;margin:0 auto}
+
+/* RECEIPT CARD */
+.receipt{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-md);margin-bottom:1.2rem}
+.receipt-header{background:linear-gradient(135deg,var(--ink3),#1a0e0b);padding:1.2rem 1.5rem;border-bottom:1px solid var(--edge);display:flex;align-items:center;justify-content:space-between}
+.receipt-brand{font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--amber2);display:flex;align-items:center;gap:.4rem}
+.receipt-brand svg{width:18px;height:18px}
+.receipt-date{font-size:.75rem;color:var(--mist)}
+
+.receipt-code-block{padding:1.4rem 1.5rem;border-bottom:1px dashed var(--edge);text-align:center;background:rgba(200,150,60,.04)}
+.rcode-label{font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--mist);margin-bottom:.5rem}
+.rcode{font-family:'Courier New',monospace;font-size:2rem;font-weight:700;color:var(--amber2);letter-spacing:.15em;text-shadow:0 0 20px rgba(200,150,60,.3)}
+.rcode-hint{font-size:.72rem;color:var(--mist);margin-top:.5rem;display:flex;align-items:center;justify-content:center;gap:.3rem}
+.rcode-hint svg{width:12px;height:12px;stroke:var(--sage2);fill:none;stroke-width:2}
+
+.receipt-body{padding:1.2rem 1.5rem}
+.rrow{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px dashed var(--edge);font-size:.84rem}
+.rrow:last-of-type{border-bottom:none}
+.rrow-lbl{color:var(--mist);display:flex;align-items:center;gap:.35rem}
+.rrow-lbl svg{width:13px;height:13px;stroke:var(--amber);fill:none;stroke-width:1.8;flex-shrink:0}
+.rrow-val{color:var(--cream2);font-weight:500;text-align:right;max-width:200px}
+
+.receipt-items{padding:0 1.5rem 1rem}
+.ritem{display:flex;justify-content:space-between;padding:.35rem 0;border-top:1px dashed var(--edge);font-size:.82rem;color:var(--mist)}
+.ritem:first-child{border-top:none}
+.ritem-name{display:flex;align-items:center;gap:.35rem}
+.ritem-name svg{width:11px;height:11px;stroke:var(--rose2);fill:none;stroke-width:2;flex-shrink:0}
+
+.receipt-total{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-top:2px solid var(--edge);background:rgba(200,150,60,.04)}
+.receipt-total span{font-size:.85rem;color:var(--mist)}
+.receipt-total strong{font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--amber2)}
+
+.receipt-footer{padding:.85rem 1.5rem;text-align:center;border-top:1px dashed var(--edge);font-size:.75rem;color:var(--mist);line-height:1.6}
+
+/* STATUS BADGE */
+.status-pill{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .75rem;border-radius:2rem;font-size:.7rem;font-weight:700;letter-spacing:.04em}
+.s-new{background:rgba(181,49,42,.15);color:var(--rose3)}
+.s-processing{background:rgba(243,156,18,.12);color:#f39c12}
+.s-delivered{background:rgba(46,204,113,.1);color:#2ecc71}
+.s-cancelled{background:rgba(150,150,150,.1);color:#888}
+
+/* ACTIONS */
+.os-actions{display:flex;gap:.7rem;flex-wrap:wrap}
+.btn-copy{padding:.75rem 1.3rem;border:1.5px solid var(--edge);border-radius:var(--r-sm);background:var(--ink3);color:var(--mist);font-family:var(--sans);font-size:.84rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.4rem;transition:all .2s}
+.btn-copy:hover{border-color:var(--amber2);color:var(--amber2)}
+.btn-copy svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.btn-copy.copied{border-color:#2ecc71;color:#2ecc71}
+
+/* CHECK BOX */
+.os-check-box{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-lg);padding:1.1rem 1.3rem;margin-bottom:1.2rem}
+.os-check-box-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);margin-bottom:.7rem;display:flex;align-items:center;gap:.35rem}
+.os-check-box-title svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.check-form{display:flex;gap:.5rem}
+.check-input{flex:1;padding:.65rem .9rem;border:1.5px solid var(--edge);border-radius:var(--r-sm);background:var(--ink3);color:var(--cream);font-family:'Courier New',monospace;font-size:.88rem;outline:none;transition:border-color .2s;letter-spacing:.1em;text-transform:uppercase}
+.check-input:focus{border-color:var(--rose)}
+.check-input::placeholder{letter-spacing:0;font-family:var(--sans);text-transform:none}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="os-page">
+
+  <!-- SUCCESS BANNER -->
+  <div class="os-banner">
+    <div class="os-check">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h1>{% if current_lang == 'uz' %}Buyurtma qabul qilindi!{% elif current_lang == 'en' %}Order Confirmed!{% else %}Заказ оформлен!{% endif %}</h1>
+    <p>{% if current_lang == 'uz' %}Tez orada siz bilan bog'lanamiz. Chek kodini saqlang!{% elif current_lang == 'en' %}We'll contact you shortly. Save your receipt code!{% else %}Мы свяжемся с вами в ближайшее время. Сохраните код чека!{% endif %}</p>
+  </div>
+
+  <!-- RECEIPT -->
+  <div class="receipt">
+    <div class="receipt-header">
+      <div class="receipt-brand">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M16 3C16 3 9 8 9 14.5C9 19.8 12.2 22.8 16 24.2C19.8 22.8 23 19.8 23 14.5C23 8 16 3 16 3Z" fill="#c8963c"/><path d="M16 24.2L16 30" stroke="#4a6e50" stroke-width="2" stroke-linecap="round"/></svg>
+        Flora Luxe
+      </div>
+      <div class="receipt-date">{{ order.created_at|date:"d.m.Y  H:i" }}</div>
+    </div>
+
+    <!-- RECEIPT CODE -->
+    <div class="receipt-code-block">
+      <div class="rcode-label">{% if current_lang == 'uz' %}Chek kodi{% elif current_lang == 'en' %}Receipt Code{% else %}Код чека{% endif %}</div>
+      <div class="rcode" id="receiptCode">{{ order.receipt_code }}</div>
+      <div class="rcode-hint">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        {% if current_lang == 'uz' %}Bu kod bilan buyurtmangizni tekshiring{% elif current_lang == 'en' %}Use this code to verify your order{% else %}По этому коду можно проверить ваш заказ{% endif %}
+      </div>
+    </div>
+
+    <!-- ORDER DETAILS -->
+    <div class="receipt-body">
+      <div class="rrow">
+        <span class="rrow-lbl">
+          <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          {% if current_lang == 'uz' %}Buyurtma №{% elif current_lang == 'en' %}Order #{% else %}Заказ №{% endif %}
+        </span>
+        <span class="rrow-val">{{ order.id }}</span>
+      </div>
+      <div class="rrow">
+        <span class="rrow-lbl">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          {% if current_lang == 'uz' %}Mijoz{% elif current_lang == 'en' %}Customer{% else %}Клиент{% endif %}
+        </span>
+        <span class="rrow-val">{{ order.user.get_full_name|default:order.user.username }}</span>
+      </div>
+      <div class="rrow">
+        <span class="rrow-lbl">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.04 2.22 2 2 0 012.03 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+          {% t 'phone' %}
+        </span>
+        <span class="rrow-val">{{ order.phone }}</span>
+      </div>
+      <div class="rrow">
+        <span class="rrow-lbl">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          {% t 'address' %}
+        </span>
+        <span class="rrow-val">{{ order.address }}</span>
+      </div>
+      <div class="rrow">
+        <span class="rrow-lbl">
+          <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          {% t 'payment_method' %}
+        </span>
+        <span class="rrow-val">
+          {% if order.payment_method == 'card' %}
+            {% if current_lang == 'uz' %}Karta{% elif current_lang == 'en' %}Card{% else %}Карта{% endif %}
+          {% elif order.payment_method == 'pickup' %}
+            {% if current_lang == 'uz' %}Olib ketish{% elif current_lang == 'en' %}Pickup{% else %}Самовывоз{% endif %}
+          {% else %}
+            {% if current_lang == 'uz' %}Naqd pul{% elif current_lang == 'en' %}Cash{% else %}Наличные{% endif %}
+          {% endif %}
+        </span>
+      </div>
+      <div class="rrow">
+        <span class="rrow-lbl">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+          {% if current_lang == 'uz' %}Holati{% elif current_lang == 'en' %}Status{% else %}Статус{% endif %}
+        </span>
+        <span class="status-pill s-{{ order.status }}">{{ order.get_status_display }}</span>
+      </div>
+    </div>
+
+    <!-- ITEMS -->
+    <div class="receipt-items">
+      {% for item in order.items.all %}
+      <div class="ritem">
+        <span class="ritem-name">
+          <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 100 14A7 7 0 0012 2z"/><path d="M12 16v6"/></svg>
+          {{ item.flower.name }} × {{ item.quantity }}
+        </span>
+        <span>{{ item.price|floatformat:0 }} {% t 'price' %}</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="receipt-total">
+      <span>{% t 'total' %}:</span>
+      <strong>{{ order.total_price|floatformat:0 }} {% t 'price' %}</strong>
+    </div>
+
+    <div class="receipt-footer">
+      Flora Luxe — {% if current_lang == 'uz' %}Buxoro{% elif current_lang == 'en' %}Bukhara{% else %}Бухара{% endif %} •
+      +998 90 123 45 67 •
+      {% if current_lang == 'uz' %}Rahmat!{% elif current_lang == 'en' %}Thank you!{% else %}Спасибо за заказ!{% endif %}
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="os-actions" style="margin-bottom:1.2rem">
+    <button class="btn-copy" id="copyBtn" onclick="copyCode()">
+      <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      {% if current_lang == 'uz' %}Kodni nusxalash{% elif current_lang == 'en' %}Copy code{% else %}Скопировать код{% endif %}
+    </button>
+    <button class="btn-copy" onclick="window.print()">
+      <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      {% if current_lang == 'uz' %}Chop etish{% elif current_lang == 'en' %}Print{% else %}Распечатать{% endif %}
+    </button>
+    <a href="{% url 'catalog' %}" class="btn btn-outline" style="text-decoration:none">
+      {% t 'continue_shopping' %}
+    </a>
+  </div>
+
+  <!-- CHECK RECEIPT BOX -->
+  <div class="os-check-box">
+    <div class="os-check-box-title">
+      <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      {% if current_lang == 'uz' %}Boshqa buyurtmani tekshirish{% elif current_lang == 'en' %}Verify another order{% else %}Проверить другой заказ{% endif %}
+    </div>
+    <form class="check-form" action="{% url 'check_receipt' %}" method="post">
+      {% csrf_token %}
+      <input type="text" name="code" class="check-input" placeholder="FL-XXXXXXXX" maxlength="12">
+      <button type="submit" class="btn btn-primary" style="padding:.65rem 1.2rem;min-height:0;border-radius:var(--r-sm)">
+        {% if current_lang == 'uz' %}Tekshirish{% elif current_lang == 'en' %}Check{% else %}Проверить{% endif %}
+      </button>
+    </form>
+  </div>
+
+</div>
+
+<script>
+function copyCode(){
+  var code = document.getElementById('receiptCode').textContent.trim();
+  var btn = document.getElementById('copyBtn');
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(code).then(function(){
+      btn.classList.add('copied');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg> {% if current_lang == "uz" %}Nusxalandi!{% elif current_lang == "en" %}Copied!{% else %}Скопировано!{% endif %}';
+      setTimeout(function(){
+        btn.classList.remove('copied');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> {% if current_lang == "uz" %}Kodni nusxalash{% elif current_lang == "en" %}Copy code{% else %}Скопировать код{% endif %}';
+      }, 2000);
+    });
+  }
+}
+</script>
+{% endblock %}

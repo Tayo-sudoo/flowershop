@@ -1,0 +1,383 @@
+{% extends 'main/base.html' %}
+{% load i18n_tags %}
+{% block title %}Flora Luxe — {% t 'shop_name' %}{% endblock %}
+{% block extra_head %}
+<style>
+/* HERO */
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 30% 40%,rgba(181,49,42,.18) 0%,transparent 55%),radial-gradient(ellipse at 75% 65%,rgba(25,75,30,.25) 0%,transparent 55%),linear-gradient(160deg,#060c07 0%,#0f1a0c 40%,#070d05 100%)}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;filter:brightness(.38) saturate(1.5)}
+.hero-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(165deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.4) 55%,rgba(0,0,0,.88) 100%)}
+.hero-particles{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+.hero-particles span{position:absolute;bottom:-50px;opacity:0;animation:floatPetal linear infinite}
+@keyframes floatPetal{0%{transform:translateY(0) rotate(0deg) scale(.8);opacity:0}5%{opacity:.65}90%{opacity:.18}100%{transform:translateY(-110vh) rotate(540deg) scale(1.2);opacity:0}}
+.hero-content{position:relative;z-index:3;text-align:center;padding:2rem 1.5rem;max-width:860px;width:100%}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:.45rem;font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--amber2);background:rgba(200,150,60,.1);border:1px solid rgba(200,150,60,.22);padding:.38rem 1rem;border-radius:2rem;margin-bottom:1.3rem;animation:fadeUp .8s .1s both}
+.hero-h1{font-family:var(--serif);font-size:clamp(2.8rem,7vw,5.8rem);font-weight:700;color:#f5ede0;line-height:1.08;letter-spacing:-.02em;text-shadow:0 4px 60px rgba(0,0,0,.85);animation:fadeUp .9s .2s both}
+.hero-h1 em{font-style:italic;background:linear-gradient(90deg,#f5d080,#c8963c,#d94035,#f5d080);background-size:250%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 5s linear infinite}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:250%}}
+.hero-sub{font-size:clamp(1rem,2.4vw,1.2rem);color:rgba(245,237,224,.6);margin:1.2rem 0 2.5rem;line-height:1.65;animation:fadeUp .9s .32s both}
+.hero-actions{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;animation:fadeUp .9s .45s both}
+.hero-btn{display:inline-flex;align-items:center;gap:.45rem;padding:.88rem 2.1rem;border-radius:3rem;font-family:var(--sans);font-size:.92rem;font-weight:600;text-decoration:none;cursor:pointer;transition:all .25s;letter-spacing:.015em;min-height:52px;border:none}
+.hero-btn svg{width:16px;height:16px}
+.hero-btn-rose{background:linear-gradient(135deg,#8e2218,#b5312a);color:#fff;box-shadow:0 8px 32px rgba(181,49,42,.5)}
+.hero-btn-rose:hover{transform:translateY(-3px);box-shadow:0 14px 42px rgba(181,49,42,.65);color:#fff}
+.hero-btn-ghost{background:rgba(255,255,255,.08);backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,.22);color:rgba(245,237,224,.9)}
+.hero-btn-ghost:hover{background:rgba(255,255,255,.15);transform:translateY(-3px);color:#fff}
+.hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:.3rem;color:rgba(255,255,255,.28);font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;animation:bounce 2.8s ease-in-out infinite}
+.hero-scroll svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}55%{transform:translateX(-50%) translateY(9px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}}
+
+/* TRUST STRIP */
+.trust-strip{background:var(--ink2);border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);padding:1.4rem 1.5rem}
+.trust-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem}
+.trust-item{display:flex;align-items:center;gap:.65rem;padding:.7rem;border-radius:var(--r-md);transition:background .2s}
+.trust-item:hover{background:rgba(74,110,80,.07)}
+.trust-ico{width:40px;height:40px;border-radius:var(--r-sm);background:var(--ink3);border:1px solid var(--edge);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.trust-ico svg{width:18px;height:18px;stroke:var(--amber);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.trust-text strong{display:block;font-size:.83rem;font-weight:600;color:var(--cream)}
+.trust-text span{font-size:.73rem;color:var(--mist)}
+@media(max-width:700px){.trust-inner{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:380px){.trust-inner{grid-template-columns:1fr}}
+
+/* FLOWERS SECTION */
+.flowers-section{max-width:1280px;margin:0 auto;padding:5rem 1.5rem 3rem}
+.sec-header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2.8rem}
+.sec-header p{color:var(--mist);font-size:.88rem;margin-top:.5rem;max-width:380px}
+.flowers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:1.4rem}
+
+/* FLOWER CARD */
+.f-card{background:#161f17;border:1px solid rgba(74,110,80,.18);border-radius:1.4rem;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.5);position:relative;transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s,border-color .3s;display:block;text-decoration:none;color:inherit}
+.f-card:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(0,0,0,.65);border-color:rgba(181,49,42,.4)}
+.f-card-img-wrap{width:100%;height:220px;overflow:hidden;position:relative}
+.f-card-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s}
+.f-card:hover .f-card-img{transform:scale(1.05)}
+.f-card-ph{width:100%;height:220px;background:linear-gradient(135deg,#1a2819,#221515);display:flex;align-items:center;justify-content:center}
+.f-card-ph svg{width:72px;height:72px;opacity:.2}
+.f-card-ribbon{position:absolute;top:.75rem;left:.75rem;padding:.22rem .65rem;background:var(--rose);color:#fff;font-size:.65rem;font-weight:800;border-radius:2rem;text-transform:uppercase;letter-spacing:.06em;z-index:2;box-shadow:0 2px 8px rgba(181,49,42,.4)}
+.f-card-body{padding:1rem 1.15rem 1.3rem;background:#161f17}
+.f-card-cat{font-size:.67rem;color:rgba(240,235,224,.45);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.28rem;display:flex;align-items:center;gap:.28rem}
+.f-card-cat svg{width:10px;height:10px;stroke:var(--sage2);fill:none;stroke-width:2}
+.f-card-name{font-family:var(--serif);font-size:1.2rem;font-weight:700;color:#f0ebe0;margin-bottom:.3rem;line-height:1.2}
+.f-card-price{font-size:1.05rem;font-weight:800;color:var(--amber2);margin-bottom:.9rem;letter-spacing:-.01em}
+.f-card-actions{display:flex;gap:.4rem}
+.f-btn{flex:1;padding:.5rem .4rem;border-radius:.65rem;text-align:center;font-size:.76rem;font-weight:700;text-decoration:none;border:1.5px solid rgba(74,110,80,.22);background:rgba(26,40,26,.8);color:rgba(240,235,224,.6);cursor:pointer;transition:all .2s;min-height:42px;display:flex;align-items:center;justify-content:center;gap:.3rem}
+.f-btn svg{width:13px;height:13px;flex-shrink:0}
+.f-btn:hover{background:rgba(74,110,80,.15);color:#f0ebe0;border-color:rgba(74,110,80,.4)}
+.f-btn.buy{background:var(--grad-rose);color:#fff;border-color:transparent;box-shadow:0 3px 12px rgba(181,49,42,.35)}
+.f-btn.buy:hover{opacity:.88;color:#fff;transform:translateY(-1px)}
+
+/* CTA */
+.cta-wrap{max-width:940px;margin:3rem auto 6rem;padding:0 1.5rem}
+.cta-box{background:linear-gradient(140deg,var(--ink3) 0%,#1f0e0a 100%);border:1px solid var(--edge2);border-radius:var(--r-2xl);padding:3.8rem 2rem;text-align:center;position:relative;overflow:hidden;box-shadow:var(--sh-lg)}
+.cta-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(181,49,42,.11),transparent 65%);pointer-events:none}
+.cta-deco{position:absolute;bottom:1rem;right:1.8rem;opacity:.08;font-size:3.2rem;letter-spacing:.5rem;pointer-events:none}
+.cta-box h2{font-family:var(--serif);font-size:clamp(1.9rem,4vw,2.8rem);font-weight:700;color:var(--amber2);margin-bottom:.7rem;position:relative}
+.cta-box p{color:var(--mist);font-size:.93rem;margin-bottom:1.9rem;position:relative;max-width:480px;margin-left:auto;margin-right:auto}
+
+/* STATS BAR */
+.stats-bar{background:var(--ink2);border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);padding:2.5rem 1.5rem;margin:0}
+.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center}
+.stat-item .stat-n{font-family:var(--serif);font-size:2.6rem;font-weight:700;color:var(--amber2);line-height:1}
+.stat-item .stat-l{font-size:.73rem;color:var(--mist);margin-top:.3rem;text-transform:uppercase;letter-spacing:.07em}
+@media(max-width:640px){.stats-inner{grid-template-columns:repeat(2,1fr)}}
+
+/* AI CHAT WIDGET */
+.ai-widget{max-width:680px;margin:0 auto 4rem;padding:0 1.5rem}
+.ai-box{background:var(--ink2);border:1px solid var(--edge);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-md)}
+.ai-header{display:flex;align-items:center;gap:.75rem;padding:1.2rem 1.4rem;border-bottom:1px solid var(--edge);background:linear-gradient(90deg,var(--ink3),var(--ink2))}
+.ai-avatar{width:40px;height:40px;border-radius:50%;background:var(--grad-rose);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-avatar svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round}
+.ai-header-text strong{display:block;font-size:.9rem;font-weight:600;color:var(--cream)}
+.ai-header-text span{font-size:.75rem;color:var(--mist)}
+.ai-online{margin-left:auto;display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#2ecc71;font-weight:600}
+.ai-online::before{content:'';width:7px;height:7px;border-radius:50%;background:#2ecc71;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ai-msgs{padding:1rem 1.2rem;min-height:100px;max-height:220px;overflow-y:auto}
+.ai-msg{display:flex;gap:.55rem;margin-bottom:.75rem}
+.ai-msg.user{flex-direction:row-reverse}
+.ai-bubble{max-width:80%;padding:.6rem .9rem;border-radius:var(--r-md);font-size:.84rem;line-height:1.55}
+.ai-bubble.bot{background:var(--ink3);color:var(--cream2);border-radius:var(--r-md) var(--r-md) var(--r-md) .25rem}
+.ai-bubble.user-b{background:var(--grad-rose);color:#fff;border-radius:var(--r-md) var(--r-md) .25rem var(--r-md)}
+.ai-suggestions{display:flex;gap:.4rem;flex-wrap:wrap;padding:.6rem 1.2rem .8rem}
+.ai-sug{padding:.3rem .75rem;background:var(--ink3);border:1px solid var(--edge);border-radius:2rem;font-size:.74rem;color:var(--mist);cursor:pointer;transition:all .2s;white-space:nowrap}
+.ai-sug:hover{background:var(--edge2);color:var(--cream);border-color:var(--edge2)}
+.ai-input-row{display:flex;gap:.5rem;padding:.8rem 1rem;border-top:1px solid var(--edge)}
+.ai-input{flex:1;padding:.6rem .9rem;border:1.5px solid var(--edge);border-radius:var(--r-xl);background:var(--ink3);color:var(--cream);font-family:var(--sans);font-size:.84rem;outline:none;transition:border-color .2s;min-height:42px}
+.ai-input::placeholder{color:rgba(240,235,224,.25)}
+.ai-input:focus{border-color:var(--rose)}
+.ai-send{width:42px;height:42px;border-radius:50%;background:var(--grad-rose);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.ai-send:hover{transform:scale(1.08);opacity:.9}
+.ai-send svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+
+@media(max-width:700px){
+  .flowers-grid{grid-template-columns:repeat(2,1fr)!important;gap:.75rem}
+  .f-card-img-wrap,.f-card-ph{height:155px}
+  .f-card-body{padding:.8rem .9rem 1.1rem}
+  .f-card-name{font-size:1rem}
+  .f-card-price{font-size:.95rem;margin-bottom:.7rem}
+  .f-btn{min-height:38px;font-size:.72rem}
+  .flowers-section{padding:3rem .85rem 2rem}
+  .sec-header{flex-direction:column;align-items:flex-start}
+  .cta-box{padding:2.2rem 1.2rem;border-radius:var(--r-xl)}
+  .cta-box h2{font-size:1.6rem}
+  .ai-widget{padding:0 .75rem}
+  .trust-inner{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:380px){
+  .flowers-grid{grid-template-columns:1fr!important}
+  .f-card-img-wrap,.f-card-ph{height:180px}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-particles" id="heroPetals"></div>
+  <video class="hero-video" autoplay muted loop playsinline preload="metadata" id="heroVid">
+    <source src="https://videos.pexels.com/video-files/856093/856093-hd_1920_1080_24fps.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Premium Flower Shop
+    </div>
+    <h1 class="hero-h1">
+      {% if current_lang == 'uz' %}Tabiat go'zalligi<br>har bir <em>guldastada</em>{% elif current_lang == 'en' %}Nature's beauty<br>in every <em>bouquet</em>{% else %}Красота природы<br>в каждом <em>букете</em>{% endif %}
+    </h1>
+    <p class="hero-sub">{% t 'slogan' %}</p>
+    <div class="hero-actions">
+      <a href="{% url 'catalog' %}" class="hero-btn hero-btn-rose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+        {% t 'view_catalog' %}
+      </a>
+      <a href="{% url 'about' %}" class="hero-btn hero-btn-ghost">
+        {% t 'about' %}
+      </a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    scroll
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip reveal">
+  <div class="trust-inner stagger">
+    <div class="trust-item">
+      <div class="trust-ico">
+        <svg viewBox="0 0 24 24"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <div class="trust-text">
+        <strong>{% if current_lang == 'uz' %}Tez yetkazish{% elif current_lang == 'en' %}Fast delivery{% else %}Быстрая доставка{% endif %}</strong>
+        <span>{% t 'delivery_time' %}</span>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-ico">
+        <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 100 14A7 7 0 0012 2z"/><path d="M12 6v4l3 2"/><path d="M12 16v6"/><path d="M8 20h8"/></svg>
+      </div>
+      <div class="trust-text">
+        <strong>{% if current_lang == 'uz' %}Yangi gullar{% elif current_lang == 'en' %}Fresh flowers{% else %}Свежие цветы{% endif %}</strong>
+        <span>{% if current_lang == 'uz' %}Har kuni yangi{% elif current_lang == 'en' %}Fresh daily{% else %}Каждый день{% endif %}</span>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-ico">
+        <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <div class="trust-text">
+        <strong>{% if current_lang == 'uz' %}Onlayn to'lov{% elif current_lang == 'en' %}Online payment{% else %}Оплата онлайн{% endif %}</strong>
+        <span>{% if current_lang == 'uz' %}Karta, naqd{% elif current_lang == 'en' %}Card or cash{% else %}Картой или наличными{% endif %}</span>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-ico">
+        <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      </div>
+      <div class="trust-text">
+        <strong>{% if current_lang == 'uz' %}Hadya qutisi{% elif current_lang == 'en' %}Gift wrapping{% else %}Подарочная упаковка{% endif %}</strong>
+        <span>{% if current_lang == 'uz' %}Bepul{% elif current_lang == 'en' %}Free of charge{% else %}Бесплатно{% endif %}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar reveal">
+  <div class="stats-inner stagger">
+    <div class="stat-item"><div class="stat-n">5+</div><div class="stat-l">{% if current_lang == 'uz' %}Yillik tajriba{% elif current_lang == 'en' %}Years{% else %}Лет работы{% endif %}</div></div>
+    <div class="stat-item"><div class="stat-n">10k+</div><div class="stat-l">{% if current_lang == 'uz' %}Baxtli mijozlar{% elif current_lang == 'en' %}Happy clients{% else %}Довольных клиентов{% endif %}</div></div>
+    <div class="stat-item"><div class="stat-n">200+</div><div class="stat-l">{% if current_lang == 'uz' %}Gul turlari{% elif current_lang == 'en' %}Flower types{% else %}Видов цветов{% endif %}</div></div>
+    <div class="stat-item"><div class="stat-n">24/7</div><div class="stat-l">{% if current_lang == 'uz' %}Yetkazib berish{% elif current_lang == 'en' %}Delivery{% else %}Доставка{% endif %}</div></div>
+  </div>
+</div>
+
+<!-- NEW ARRIVALS -->
+<section class="flowers-section">
+  <div class="sec-header reveal">
+    <div>
+      <h2 class="section-title">{% if current_lang == 'uz' %}Yangi kelganlar{% elif current_lang == 'en' %}New Arrivals{% else %}Свежие поступления{% endif %}</h2>
+      <p>{% t 'slogan' %}</p>
+    </div>
+    <a href="{% url 'catalog' %}" class="btn btn-outline">
+      {% t 'catalog' %}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+  <div class="flowers-grid stagger">
+    {% for flower in flowers %}
+    <a href="{% url 'flower_detail' flower.pk %}" class="f-card">
+      {% if flower.image %}
+        <div class="f-card-img-wrap"><img src="{{ flower.image.url }}" alt="{{ flower.name }}" class="f-card-img" loading="lazy"></div>
+      {% else %}
+        <div class="f-card-ph">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M40 10C40 10 28 18 28 30C28 39.4 33 43.5 40 46C47 43.5 52 39.4 52 30C52 18 40 10 40 10Z" fill="#c8963c" opacity=".5"/>
+            <path d="M40 46L40 68" stroke="#4a6e50" stroke-width="3" stroke-linecap="round"/>
+            <path d="M40 58C40 58 32 54 28 58" stroke="#4a6e50" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+      {% endif %}
+      <div class="f-card-ribbon">New</div>
+      <div class="f-card-body">
+        <div class="f-card-cat">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          {{ flower.category.name }}
+        </div>
+        <div class="f-card-name">{{ flower.name }}</div>
+        <div class="f-card-price">{{ flower.price }} {% t 'price' %}</div>
+        <div class="f-card-actions">
+          <span class="f-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            {% t 'details' %}
+          </span>
+          <a href="{% url 'add_to_cart' flower.pk %}" class="f-btn buy" onclick="event.preventDefault();event.stopPropagation();quickCart({{ flower.pk }},this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            {% t 'add_to_cart' %}
+          </a>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if flowers %}
+  <div style="text-align:center;margin-top:3rem;" class="reveal">
+    <a href="{% url 'catalog' %}" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+      {% t 'view_catalog' %}
+    </a>
+  </div>
+  {% endif %}
+</section>
+
+<!-- AI CHAT -->
+<div class="ai-widget reveal">
+  <div class="ai-box">
+    <div class="ai-header">
+      <div class="ai-avatar">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M18 8h2a2 2 0 012 2v.5"/><path d="M2 10.5A2 2 0 014 8h2"/></svg>
+      </div>
+      <div class="ai-header-text">
+        <strong>Flora AI</strong>
+        <span>{% t 'ai_title' %}</span>
+      </div>
+      <div class="ai-online">Online</div>
+    </div>
+    <div class="ai-msgs" id="aiMsgs">
+      <div class="ai-msg">
+        <div class="ai-bubble bot">{% t 'ai_message' %}</div>
+      </div>
+    </div>
+    <div class="ai-suggestions" id="aiSugs">
+      <span class="ai-sug" onclick="askAI('{% t 'suggestion_birthday' %}')">{% t 'suggestion_birthday' %}</span>
+      <span class="ai-sug" onclick="askAI('{% t 'suggestion_rose_care' %}')">{% t 'suggestion_rose_care' %}</span>
+      <span class="ai-sug" onclick="askAI('{% t 'suggestion_prices' %}')">{% t 'suggestion_prices' %}</span>
+      <span class="ai-sug" onclick="askAI('{% t 'suggestion_delivery' %}')">{% t 'suggestion_delivery' %}</span>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" id="aiInput" type="text" placeholder="{% t 'ask_question' %}" autocomplete="off">
+      <button class="ai-send" id="aiSend" onclick="sendAI()">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-wrap reveal">
+  <div class="cta-box">
+    <div class="cta-deco">✿ ❀ ✿ ❀</div>
+    <h2>{% t 'make_day' %}</h2>
+    <p>{% t 'delivery_cost' %}</p>
+    <a href="{% url 'catalog' %}" class="btn btn-amber">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      {% t 'checkout' %}
+    </a>
+  </div>
+</div>
+
+<script>
+// Floating petals
+(function(){
+  var shapes=['✿','❀','✾','❁','✽','❋'];
+  var c=document.getElementById('heroPetals'); if(!c)return;
+  for(var i=0;i<20;i++){
+    var s=document.createElement('span');
+    s.textContent=shapes[Math.floor(Math.random()*shapes.length)];
+    s.style.cssText='left:'+Math.random()*100+'%;font-size:'+(1+Math.random()*1.4)+'rem;color:rgba(200,150,60,'+(0.2+Math.random()*.35)+');animation-duration:'+(12+Math.random()*16)+'s;animation-delay:'+(Math.random()*15)+'s;';
+    c.appendChild(s);
+  }
+  // Video fallback
+  var v=document.getElementById('heroVid');
+  if(v) setTimeout(function(){if(v.readyState<2) v.style.display='none';},7000);
+})();
+
+// Quick add to cart
+function quickCart(pk, btn){
+  var orig=btn.innerHTML;
+  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg>';
+  btn.style.background='#2ecc71';
+  fetch('/cart/add/'+pk+'/',{headers:{'X-Requested-With':'XMLHttpRequest'}}).catch(function(){});
+  setTimeout(function(){ btn.innerHTML=orig; btn.style.background=''; window.location.href='/cart/add/'+pk+'/'; },900);
+}
+
+// AI Chat
+function appendMsg(text,role){
+  var msgs=document.getElementById('aiMsgs');
+  var div=document.createElement('div');
+  div.className='ai-msg'+(role==='user'?' user':'');
+  div.innerHTML='<div class="ai-bubble '+(role==='user'?'user-b':'bot')+'">'+text+'</div>';
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function askAI(q){ document.getElementById('aiInput').value=q; sendAI(); }
+function sendAI(){
+  var inp=document.getElementById('aiInput');
+  var q=inp.value.trim(); if(!q)return;
+  appendMsg(q,'user'); inp.value='';
+  document.getElementById('aiSugs').style.display='none';
+  var wait=document.createElement('div');
+  wait.className='ai-msg'; wait.id='aiTyping';
+  wait.innerHTML='<div class="ai-bubble bot" style="opacity:.5">{% t 'typing' %}</div>';
+  document.getElementById('aiMsgs').appendChild(wait);
+  document.getElementById('aiMsgs').scrollTop=9999;
+  fetch("{% url 'ai_chat' %}",{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':'{{ csrf_token }}'},body:JSON.stringify({question:q})})
+  .then(function(r){return r.json();}).then(function(d){
+    var t=document.getElementById('aiTyping'); if(t)t.remove();
+    appendMsg(d.response,'bot');
+  }).catch(function(){
+    var t=document.getElementById('aiTyping'); if(t)t.remove();
+    appendMsg('{% if current_lang == "uz" %}Xatolik yuz berdi{% elif current_lang == "en" %}Something went wrong{% else %}Произошла ошибка{% endif %}','bot');
+  });
+}
+document.getElementById('aiInput').addEventListener('keydown',function(e){if(e.key==='Enter')sendAI();});
+</script>
+{% endblock %}
