@@ -26,10 +26,7 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get(
-    'DJANGO_ALLOWED_HOSTS',
-    'localhost,127.0.0.1,0.0.0.0'
-).split(',')
+ALLOWED_HOSTS = ['*']
 
 # In production, add your domain: DJANGO_ALLOWED_HOSTS=floraluxe.uz,www.floraluxe.uz
 
