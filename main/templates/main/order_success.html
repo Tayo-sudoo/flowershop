@@ -182,19 +182,43 @@
   </div>
 
   <!-- ACTIONS -->
-  <div class="os-actions" style="margin-bottom:1.2rem">
-    <button class="btn-copy" id="copyBtn" onclick="copyCode()">
-      <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-      {% if current_lang == 'uz' %}Kodni nusxalash{% elif current_lang == 'en' %}Copy code{% else %}Скопировать код{% endif %}
+ <div class="os-actions" style="margin-bottom:1.2rem">
+
+  <!-- 💳 КНОПКА ОПЛАТЫ -->
+ <div style="display:flex; gap:.5rem; flex-wrap:wrap">
+
+  <!-- PAYME -->
+  <a href="{% url 'pay' order.id %}?method=payme">
+    <button style="background:#6c5ce7;color:white;padding:.7rem 1.2rem;border:none;border-radius:8px;">
+      💳 Payme
     </button>
-    <button class="btn-copy" onclick="window.print()">
-      <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-      {% if current_lang == 'uz' %}Chop etish{% elif current_lang == 'en' %}Print{% else %}Распечатать{% endif %}
+  </a>
+
+  <!-- CLICK -->
+  <a href="{% url 'pay' order.id %}?method=click">
+    <button style="background:#00aaff;color:white;padding:.7rem 1.2rem;border:none;border-radius:8px;">
+      💳 Click
     </button>
-    <a href="{% url 'catalog' %}" class="btn btn-outline" style="text-decoration:none">
-      {% t 'continue_shopping' %}
-    </a>
-  </div>
+  </a>
+
+</div>
+
+  <!-- СТАРЫЕ КНОПКИ -->
+  <button class="btn-copy" id="copyBtn" onclick="copyCode()">
+    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+    {% if current_lang == 'uz' %}Kodni nusxalash{% elif current_lang == 'en' %}Copy code{% else %}Скопировать код{% endif %}
+  </button>
+
+  <button class="btn-copy" onclick="window.print()">
+    <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    {% if current_lang == 'uz' %}Chop etish{% elif current_lang == 'en' %}Print{% else %}Распечатать{% endif %}
+  </button>
+
+  <a href="{% url 'catalog' %}" class="btn btn-outline" style="text-decoration:none">
+    {% t 'continue_shopping' %}
+  </a>
+
+</div>
 
   <!-- CHECK RECEIPT BOX -->
   <div class="os-check-box">

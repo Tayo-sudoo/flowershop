@@ -26,4 +26,6 @@ urlpatterns = [
     path('check-receipt/', views.check_receipt, name='check_receipt'),
     path('admin/block-user/<int:user_id>/', views.admin_block_user, name='admin_block_user'),
     path('admin/delete-user/<int:user_id>/', views.admin_delete_user, name='admin_delete_user'),
+    path('pay/<int:order_id>/', views.pay, name='pay'),
+    path('payme/', views.payme, name='payme'),
 ]

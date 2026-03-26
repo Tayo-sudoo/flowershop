@@ -23,13 +23,17 @@ def home(request):
 
 
 def catalog(request):
-    flowers = Flower.objects.filter(available=True).select_related('category')
+    flowers = Flower.objects.all().select_related('category')  # ← показываем ВСЕ
     categories = Category.objects.all()
+
     search_query = request.GET.get('search', '')
     category_slug = request.GET.get('category', '')
 
+    # фильтр поиска
     if search_query:
         flowers = flowers.filter(name__icontains=search_query)
+
+    # фильтр категории
     if category_slug:
         flowers = flowers.filter(category__slug=category_slug)
 
@@ -275,6 +279,7 @@ def change_language(request):
 
 
 def google_login(request):
+    print("CLIENT_ID:", settings.GOOGLE_CLIENT_ID)
     state = secrets.token_urlsafe(16)
     request.session['google_oauth_state'] = state
     # Динамически берём текущий host из запроса (работает с любым IP)
@@ -386,3 +391,126 @@ def admin_delete_user(request, user_id):
     return redirect(request.META.get('HTTP_REFERER', '/admin/'))
 
 
+@login_required
+def pay(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+
+    if order.user != request.user:
+        from django.http import Http404
+        raise Http404
+
+    # 👉 выбор метода оплаты
+    method = request.GET.get('method')
+
+    # 💚 PAYME
+    if method == 'payme':
+        payme_url = f"https://checkout.paycom.uz/{order.id}"
+        return redirect(payme_url)
+
+    # 💙 CLICK
+    if method == 'click':
+        click_url = f"https://my.click.uz/services/pay?service_id=YOUR_SERVICE_ID&merchant_id=YOUR_MERCHANT_ID&amount={order.total_price}&transaction_param={order.id}"
+        return redirect(click_url)
+
+    # если просто нажали оплатить (фейк fallback)
+    order.status = 'paid'
+    order.save()
+    messages.success(request, '✅ Оплата (тест) прошла!')
+    return redirect('order_success', receipt_code=order.receipt_code)
+
+import base64
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from .models import Order
+
+PAYME_SECRET = "TEST_KEY"  # потом заменишь
+
+
+@csrf_exempt
+def payme(request):
+    data = json.loads(request.body)
+    method = data.get('method')
+    params = data.get('params', {})
+    request_id = data.get('id')
+
+    def response(result=None, error=None):
+        return JsonResponse({
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "result": result,
+            "error": error
+        })
+
+    # 🔐 ПРОВЕРКА AUTH
+    auth = request.headers.get('Authorization')
+    if not auth:
+        return response(error={"code": -32504, "message": "Unauthorized"})
+
+    key = base64.b64decode(auth.split()[1]).decode()
+    if key != PAYME_SECRET:
+        return response(error={"code": -32504, "message": "Unauthorized"})
+
+    # =========================
+    # 1. CHECK PERFORM TRANSACTION
+    # =========================
+    if method == "CheckPerformTransaction":
+        order_id = params['account']['order_id']
+        try:
+            order = Order.objects.get(id=order_id)
+            return response(result={"allow": True})
+        except Order.DoesNotExist:
+            return response(error={"code": -31050, "message": "Order not found"})
+
+    # =========================
+    # 2. CREATE TRANSACTION
+    # =========================
+    if method == "CreateTransaction":
+        order_id = params['account']['order_id']
+        transaction_id = params['id']
+
+        order = Order.objects.get(id=order_id)
+
+        order.transaction_id = transaction_id
+        order.save()
+
+        return response(result={
+            "create_time": 123456789,
+            "transaction": transaction_id,
+            "state": 1
+        })
+
+    # =========================
+    # 3. PERFORM TRANSACTION
+    # =========================
+    if method == "PerformTransaction":
+        transaction_id = params['id']
+
+        order = Order.objects.get(transaction_id=transaction_id)
+        order.status = 'paid'
+        order.save()
+
+        return response(result={
+            "transaction": transaction_id,
+            "perform_time": 123456789,
+            "state": 2
+        })
+
+    # =========================
+    # 4. CHECK TRANSACTION
+    # =========================
+    if method == "CheckTransaction":
+        transaction_id = params['id']
+        order = Order.objects.get(transaction_id=transaction_id)
+
+        return response(result={
+            "transaction": transaction_id,
+            "state": 2
+        })
+
+    # =========================
+    # 5. CANCEL
+    # =========================
+    if method == "CancelTransaction":
+        return response(result={"state": -1})
+
+    return response(error={"code": -32601, "message": "Method not found"})
