@@ -3,14 +3,14 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY
-SECRET_KEY = os.getenv("SECRET_KEY")
+# ================= SECURITY =================
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['.railway.app', 'localhost', '127.0.0.1']
 
 
-# APPS
+# ================= APPS =================
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -19,43 +19,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # ALLAUTH
-    'django.contrib.sites',
-
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-
     'main',
 ]
 
-SITE_ID = 1
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
-
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-
-
-# ✅ MIDDLEWARE (ИСПРАВЛЕНО)
+# ================= MIDDLEWARE =================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
 
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
-
-    # 🔥 ВАЖНО — ЭТО ТЕБЕ НЕ ХВАТАЛО
-    'allauth.account.middleware.AccountMiddleware',
 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -66,8 +40,11 @@ MIDDLEWARE = [
 ]
 
 
+# ================= URLS =================
 ROOT_URLCONF = 'flowershop.urls'
 
+
+# ================= TEMPLATES =================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -76,7 +53,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',  # обязательно для allauth
+                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'main.context_processors.language_processor',
@@ -85,12 +62,11 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'flowershop.wsgi.application'
 
 
-# DATABASE
-import os
-
+# ================= DATABASE =================
 DATABASE_URL = os.environ.get('DATABASE_URL', '')
 
 if DATABASE_URL and DATABASE_URL.startswith('postgres'):
@@ -115,7 +91,8 @@ else:
         }
     }
 
-# PASSWORDS
+
+# ================= PASSWORDS =================
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -124,26 +101,26 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# I18N
+# ================= I18N =================
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Asia/Tashkent'
 USE_I18N = True
 USE_TZ = True
 
 
-# STATIC
+# ================= STATIC =================
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-# MEDIA
+# ================= MEDIA =================
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# SECURITY (Railway)
+# ================= SECURITY (Railway) =================
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
 
@@ -151,13 +128,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 
-# GOOGLE
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv("GOOGLE_CLIENT_ID")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-GOOGLE_REDIRECT_URI = "GOOGLE_REDIRECT_URI"
-
-
-# EMAIL
+# ================= EMAIL =================
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
