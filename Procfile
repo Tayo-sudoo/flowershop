@@ -1,1 +1,1 @@
-web: gunicorn flowershop.wsgi --workers 2 --bind 0.0.0.0:$PORT
+web: python manage.py migrate && gunicorn flowershop.wsgi
