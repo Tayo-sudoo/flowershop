@@ -12,6 +12,7 @@ ALLOWED_HOSTS = ['.railway.app', 'localhost', '127.0.0.1']
 
 # ================= APPS =================
 INSTALLED_APPS = [
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,7 +56,6 @@ MIDDLEWARE = [
 
     # обязательно
     'allauth.account.middleware.AccountMiddleware',
-
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
