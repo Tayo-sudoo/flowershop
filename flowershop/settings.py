@@ -4,7 +4,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-change-me')
+SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['.railway.app', 'localhost', '127.0.0.1']
@@ -89,11 +89,14 @@ WSGI_APPLICATION = 'flowershop.wsgi.application'
 
 
 # DATABASE
+import os
+
 DATABASE_URL = os.environ.get('DATABASE_URL', '')
 
 if DATABASE_URL and DATABASE_URL.startswith('postgres'):
     import urllib.parse
     url = urllib.parse.urlparse(DATABASE_URL)
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -111,7 +114,6 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
 
 # PASSWORDS
 AUTH_PASSWORD_VALIDATORS = [
