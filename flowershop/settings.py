@@ -3,23 +3,24 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ================= SECURITY =================
-SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
+# SECURITY
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-change-me')
+
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['.railway.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['.railway.app']
 
-
-# ================= APPS =================
+# APPS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.contenttypes',
+    'django.contrib.contenttypes',  # ОБЯЗАТЕЛЬНО
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'django.contrib.sites',  # ✅ только один раз
+    # ALLAUTH
+    'django.contrib.sites',
 
     'allauth',
     'allauth.account',
@@ -28,7 +29,6 @@ INSTALLED_APPS = [
 
     'main',
 ]
-
 SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = [
@@ -36,24 +36,24 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
 
-# ================= MIDDLEWARE =================
+# MIDDLEWARE (ОДИН РАЗ!)
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
-
-    # обязательно
-    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.common.CommonMiddleware',
+
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 
@@ -61,11 +61,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ================= URLS =================
 ROOT_URLCONF = 'flowershop.urls'
 
-
-# ================= TEMPLATES =================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -83,17 +80,14 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'flowershop.wsgi.application'
 
-
-# ================= DATABASE =================
+# DATABASE
 DATABASE_URL = os.environ.get('DATABASE_URL', '')
 
 if DATABASE_URL and DATABASE_URL.startswith('postgres'):
     import urllib.parse
     url = urllib.parse.urlparse(DATABASE_URL)
-
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -112,8 +106,7 @@ else:
         }
     }
 
-
-# ================= PASSWORDS =================
+# PASSWORDS
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -121,27 +114,23 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# ================= I18N =================
+# I18N
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Asia/Tashkent'
 USE_I18N = True
 USE_TZ = True
 
-
-# ================= STATIC =================
+# STATIC
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-
-# ================= MEDIA =================
+# MEDIA
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
-# ================= SECURITY (Railway) =================
+# SECURITY (Railway)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
 
@@ -149,18 +138,13 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 
-# ================= EMAIL =================
+
+# GOOGLE
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI')
+
+# EMAIL
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'APP': {
-            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
-            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
-            'key': ''
-        }
-    }
-}
