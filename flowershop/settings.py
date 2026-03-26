@@ -12,7 +12,6 @@ ALLOWED_HOSTS = ['.railway.app', 'localhost', '127.0.0.1']
 
 # ================= APPS =================
 INSTALLED_APPS = [
-    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -20,10 +19,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # обязательно
-    'django.contrib.sites',
+    'django.contrib.sites',  # ✅ только один раз
 
-    # allauth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
