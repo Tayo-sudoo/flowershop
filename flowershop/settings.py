@@ -134,3 +134,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # DEFAULT
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.railway.app',
+]
